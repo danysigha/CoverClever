@@ -1,0 +1,8 @@
+{
+    "benefits": {
+      "hospitalization": "Covers 80% of in-network hospital stays after deductible.",
+      "emergency": "Emergency room visits have a $100 copay.",
+      "prescriptions": "Generic drugs have a $10 copay, brand-name drugs have a $30 copay."
+    }
+  }
+  
