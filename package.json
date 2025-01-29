@@ -1,0 +1,30 @@
+{
+  "name": "coverclever",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Your assistant for everything health insurance related",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "webpack --watch",
+    "start": "webpack serve --open",
+    "build": "webpack"
+  },
+  "keywords": [
+    "insurance",
+    "health",
+    "BCBS"
+  ],
+  "author": "Dany Sigha",
+  "license": "ISC",
+  "devDependencies": {
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^7.1.2",
+    "express": "^4.21.2",
+    "html-webpack-plugin": "^5.6.3",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-middleware": "^7.4.2",
+    "webpack-dev-server": "^5.2.0"
+  }
+}
