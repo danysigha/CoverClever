@@ -1,0 +1,8 @@
+{
+  "context": "Your insurance policy covers the following: 1. Medical expenses up to $1,000,000. 2. Accidental damage to property up to $500,000. 3. Liability coverage up to $2,000,000. To file a claim, visit our claims portal or call our support team at 1-800-123-4567. Your monthly premium is $150.",
+  "questions": {
+    "What is covered under my policy?": "Your policy covers medical expenses, accidental damage to property, and liability coverage.",
+    "How do I file a claim?": "You can file a claim by visiting our claims portal or calling our support team at 1-800-123-4567.",
+    "What is my premium?": "Your monthly premium is $150."
+  }
+}
