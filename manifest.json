@@ -1,16 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "Chat with JSON",
+  "name": "Insurance Chatbot",
   "version": "1.0",
-  "description": "Ask contextual questions about a JSON file using an LLM.",
-  "permissions": ["storage", "scripting", "activeTab"],
+  "description": "A chatbot to provide instant answers about insurance policies.",
+  "permissions": ["activeTab", "storage"],
   "background": {
     "service_worker": "background.js"
   },
-  "host_permissions": ["https://*/*"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
     }
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"]
+    }
+  ]
 }

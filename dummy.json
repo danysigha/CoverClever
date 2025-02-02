@@ -1,8 +1,5 @@
 {
-    "benefits": {
-      "hospitalization": "Covers 80% of in-network hospital stays after deductible.",
-      "emergency": "Emergency room visits have a $100 copay.",
-      "prescriptions": "Generic drugs have a $10 copay, brand-name drugs have a $30 copay."
-    }
-  }
-  
+  "What is covered under my policy?": "Your policy covers X, Y, and Z.",
+  "How do I file a claim?": "You can file a claim by visiting our claims portal or calling our support team.",
+  "What is my premium?": "Your premium is $X per month."
+}
