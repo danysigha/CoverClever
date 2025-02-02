@@ -22,12 +22,12 @@ export default function Login() {
         toast.error(data.error);
       } else {
         setData({});
+        toast.success("Login success!");
         navigate("/dashboard");
       }
     } catch (err) {
       console.log(err);
     }
-    axios.get("/");
   };
 
   return (

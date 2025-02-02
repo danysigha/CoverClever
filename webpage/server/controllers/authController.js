@@ -1,10 +1,6 @@
-const User = require("../models/user")
+const User = require("../models/user");
 const { hashPassword, comparePassword } = require("../helpers/authHelpers");
 const jwt = require("jsonwebtoken");
-
-const test = (req, res) => {
-    res.json("test is working");
-}
 
 const loginUser = async (req, res) => {
     try {
@@ -52,11 +48,12 @@ const registerUser = async (req, res) => {
         }
 
         const hashedPassword = await hashPassword(password);
-        const user = await User.create({
+        const user = new User({
             name,
             email,
             password: hashedPassword,
         })
+        await user.save();
         return res.json(user);
     } catch (err) {
         console.log(err)
@@ -64,19 +61,22 @@ const registerUser = async (req, res) => {
 }
 
 const getProfile = (req, res) => {
-    const {token} = req.cookies;
-    if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
-            if (err) throw err;
-            res.json(user);
-        })
-    } else {
-        res.json(null);
+    try {
+        const {token} = req.cookies;
+        if (token) {
+            jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
+                if (err) throw err;
+                res.json(user);
+            })
+        } else {
+            res.json(null);
+        }
+    } catch (err) {
+        console.log(err);
     }
 }
 
 module.exports = {
-    test,
     loginUser,
     registerUser,
     getProfile,
