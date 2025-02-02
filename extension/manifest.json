@@ -1,0 +1,18 @@
+{
+  "name": "CoverClever",
+  "description": "A mock Chrome extension that supports file uploading",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "/popup/popup.html",
+    "default_icon": "images/icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "/options/options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self';"
+  }
+}
