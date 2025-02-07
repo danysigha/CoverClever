@@ -1,20 +1,13 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import questions from "../assets/questions";
-import { UserContext } from "../../context/userContext";
 
 export default function Questionnaire() {
-  const { user } = useContext(UserContext);
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState({});
-
-  if (!user) {
-    navigate("/login");
-    return;
-  }
 
   const onSubmit = async () => {
     try {

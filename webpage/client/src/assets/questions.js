@@ -3,14 +3,8 @@ const questions = [
   { id: "income", text: "What is your annual income?", type: "number" },
   {
     id: "coverage",
-    text: "Do you prefer low monthly costs or lower deductibles?",
-    type: "radio",
-    options: ["Low monthly costs", "Lower deductibles"],
-  },
-  {
-    id: "doctor",
-    text: "Do you have a preferred doctor or hospital network?",
-    type: "text",
+    text: "How much do you want to spend on health insurance?",
+    type: "number",
   },
   {
     id: "prescriptions",
@@ -18,6 +12,46 @@ const questions = [
     type: "radio",
     options: ["Yes", "No"],
   },
+  {
+    id: "preexisting",
+    text: "Do you have any pre-existing medical conditions?",
+    type: "radio",
+    options: ["Yes", "No"],
+  },
+  {
+    id: "family",
+    text: "How many family members need coverage?",
+    type: "number"
+  },
+  {
+    id: "specialist",
+    text: "Do you frequently visit specialists?",
+    type: "radio",
+    options: ["Yes", "No"],
+  },
+  {
+    id: "vision",
+    text: "Do you need vision coverage?",
+    type: "radio",
+    options: ["Yes", "No"],
+  },
+  {
+    id: "dental",
+    text: "Do you need dental coverage?",
+    type: "radio",
+    options: ["Yes", "No"],
+  },
+  {
+    id: "emergency",
+    text: "Have you had any emergency room visits in the past year?",
+    type: "radio",
+    options: ["Yes", "No"],
+  },
+  {
+    id: "other",
+    text: "Use this space to tell us about any other factors that may affect your health insurance needs.",
+    type: "textarea"
+  }
 ];
 
 export default questions;
