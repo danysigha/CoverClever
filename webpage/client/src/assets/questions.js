@@ -1,22 +1,32 @@
 const questions = [
-  { id: "age", text: "What is your age?", type: "number" },
-  { id: "income", text: "What is your annual income?", type: "number" },
+  { id: "age", text: "What is your age?", type: "number", required: true },
+  { id: "income", text: "What is your annual income?", type: "number", required: true },
   {
     id: "coverage",
     text: "How much do you want to spend on health insurance?",
     type: "number",
+    required: true,
   },
   {
     id: "prescriptions",
     text: "Do you regularly take prescription medications?",
     type: "radio",
     options: ["Yes", "No"],
+    required: true,
   },
   {
     id: "preexisting",
     text: "Do you have any pre-existing medical conditions?",
     type: "radio",
     options: ["Yes", "No"],
+    required: true,
+  },
+  {
+    id: "conditions",
+    text: "Select all medical conditions that apply:",
+    type: "checkbox",
+    options: ["Diabetes", "Heart Disease", "Asthma", "High Blood Pressure", "None"],
+    required: true,
   },
   {
     id: "family",
@@ -50,8 +60,9 @@ const questions = [
   {
     id: "other",
     text: "Use this space to tell us about any other factors that may affect your health insurance needs.",
-    type: "textarea"
-  }
+    type: "text",
+    required: true,
+  },
 ];
 
 export default questions;

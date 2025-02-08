@@ -10,7 +10,7 @@ const submitPreferences = async (req, res) => {
         user.preferences = responses;
         await user.save();
 
-        res.json({ message: "Preferences saved successfully!" });
+        res.json(user.preferences);
     } catch (error) {
         res.json({ error: "Error saving preferences" });
     }
@@ -29,20 +29,41 @@ const getPreferences = async (req, res) => {
 
 const authenticateUser = (req, res, next) => {
     try {
-        const {token} = req.cookies;
-        if (token) {
-            jwt.verify(token, process.env.JWT_SECRET, {}, (err, user) => {
-                if (err) throw err;
-                req.user = user;
-                next();
-            })
-        } else {
-            res.json(null);
+        // Check for Authorization header
+        const authHeader = req.headers.authorization;
+        if (!authHeader) {
+            return res.status(401).json({
+                message: "Authorization header missing"
+            });
         }
-    } catch (err) {
-        console.log(err);
+
+        // Check if it's a Bearer token
+        const [bearer, token] = authHeader.split(' ');
+        if (bearer !== 'Bearer' || !token) {
+            return res.status(401).json({
+                message: "Invalid authorization format"
+            });
+        }
+
+        // Verify the token
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(401).json({
+                    message: "Invalid or expired token"
+                });
+            }
+
+            // Attach user info to request
+            req.user = decoded;
+            next();
+        });
+    } catch (error) {
+        console.error('Error in authentication:', error);
+        res.status(500).json({
+            message: "Server error during authentication"
+        });
     }
-}
+};
 
 module.exports = {
     submitPreferences,

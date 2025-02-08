@@ -14,6 +14,25 @@ import PrivateRoute from "./components/PrivateRoute";
 axios.defaults.baseURL = "http://localhost:8000";
 axios.defaults.withCredentials = true;
 
+// Add interceptor to add token to all requests
+axios.interceptors.request.use((config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+// Add interceptor to handle token from login response
+axios.interceptors.response.use((response) => {
+    const authHeader = response.headers['authorization'];
+    if (authHeader?.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        localStorage.setItem('token', token);
+    }
+    return response;
+});
+
 function App() {
   return (
     <>

@@ -1,7 +1,7 @@
 chrome.runtime.onInstalled.addListener(() => {
   console.log("CoverClever extension installed!");
   chrome.tabs.create({
-    url: "http://localhost:5173/login"
+    url: "http://localhost:5173/"
   });
 });
 

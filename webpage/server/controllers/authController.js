@@ -7,26 +7,46 @@ const loginUser = async (req, res) => {
         const {email, password} = req.body;
         const user = await User.findOne({email});
         if (!user) {
-            return res.json({
-                error: "No user found"
-            })
+            return res.status(401).json({
+                message: "No user found"
+            });
         }
         const match = await comparePassword(password, user.password);
         if (match) {
-            jwt.sign({email: user.email, id: user._id, first_name: user.first_name, 
-                last_name: user.last_name}, process.env.JWT_SECRET, {}, (err, token) => {
-                if (err) throw err;
-                res.cookie("token", token).json(user);
-            })
+            const token = jwt.sign(
+                {
+                    email: user.email, 
+                    id: user._id, 
+                    first_name: user.first_name, 
+                    last_name: user.last_name
+                }, 
+                process.env.JWT_SECRET,
+                { expiresIn: '24h' }
+            );
+            
+            // Return token in Authorization header instead of cookie
+            res.status(200)
+               .header('Authorization', `Bearer ${token}`)
+               .json({
+                    user: {
+                        id: user._id,
+                        email: user.email,
+                        first_name: user.first_name,
+                        last_name: user.last_name
+                    }
+                });
         } else {
-            res.json({
-                error: "Password does not match"
-            })
+            res.status(401).json({
+                message: "Password does not match"
+            });
         }
     } catch (err) {
         console.log(err);
+        res.status(500).json({
+            message: "Server error during login"
+        });
     }
-}
+};
 
 const registerUser = async (req, res) => {
     try {
@@ -67,7 +87,7 @@ const registerUser = async (req, res) => {
     }
 }
 
-const getProfile = (req, res) => {
+const getUser = (req, res) => {
     try {
         const {token} = req.cookies;
         if (token) {
@@ -86,5 +106,5 @@ const getProfile = (req, res) => {
 module.exports = {
     loginUser,
     registerUser,
-    getProfile,
+    getUser,
 }

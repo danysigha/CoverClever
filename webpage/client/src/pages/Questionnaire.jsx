@@ -2,11 +2,11 @@
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-// import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import questions from "../assets/questions";
 
 export default function Questionnaire() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState({});
 
@@ -30,14 +30,14 @@ export default function Questionnaire() {
             (response) => {
               console.log(response);
               if (response.status === "success") {
-                // window.close();
-                chrome.runtime.sendMessage(
-                  "obhfnegefpkpoicjhfafbibcocbakkoo",
-                  { type: "CLOSE_TAB" },
-                  (closeResponse) => {
-                    console.log(closeResponse);
-                  }
-                );
+                navigate("/dashboard");
+                // chrome.runtime.sendMessage(
+                //   "obhfnegefpkpoicjhfafbibcocbakkoo",
+                //   { type: "CLOSE_TAB" },
+                //   (closeResponse) => {
+                //     console.log(closeResponse);
+                //   }
+                // );
               }
             }
           );
@@ -49,15 +49,52 @@ export default function Questionnaire() {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setResponses((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    if (type === 'checkbox') {
+      setResponses(prev => ({
+        ...prev,
+        [name]: {
+          ...prev[name],
+          [value]: checked
+        }
+      }));
+    } else {
+      setResponses((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const nextQuestion = () => {
+    const currentQ = questions[currentQuestion];
+    
+    if (currentQ.required && !isAnswered(currentQ)) {
+      toast.error("This field is required");
+      return;
+    }
+
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
       onSubmit(responses);
+    }
+  };
+
+  const isAnswered = (question) => {
+    const response = responses[question.id];
+    
+    if (!response) return false;
+    
+    switch (question.type) {
+      case 'checkbox':
+        // At least one checkbox should be selected
+        return Object.values(response).some(value => value === true);
+      case 'text':
+        return response.trim() !== '';
+      case 'number':
+        return response !== '' && !isNaN(response);
+      case 'radio':
+        return response !== undefined;
+      default:
+        return false;
     }
   };
 
@@ -70,7 +107,10 @@ export default function Questionnaire() {
   return (
     <div>
       <h2>Questionnaire</h2>
-      <p>{questions[currentQuestion].text}</p>
+      <p>
+        {questions[currentQuestion].text}
+        {questions[currentQuestion].required && <span style={{color: 'red'}}> *</span>}
+      </p>
       {questions[currentQuestion].type === "radio" ? (
         questions[currentQuestion].options.map((option) => (
           <label key={option}>
@@ -79,6 +119,19 @@ export default function Questionnaire() {
               name={questions[currentQuestion].id}
               value={option}
               checked={responses[questions[currentQuestion].id] === option}
+              onChange={handleChange}
+            />
+            {option}
+          </label>
+        ))
+      ) : questions[currentQuestion].type === "checkbox" ? (
+        questions[currentQuestion].options.map((option) => (
+          <label key={option}>
+            <input
+              type="checkbox"
+              name={questions[currentQuestion].id}
+              value={option}
+              checked={responses[questions[currentQuestion].id]?.[option] || false}
               onChange={handleChange}
             />
             {option}
