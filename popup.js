@@ -8,6 +8,8 @@ document.addEventListener('DOMContentLoaded', () => {
     window.close();
   });
 
+  let conversationHistory = [];
+
   sendBtn.addEventListener('click', () => {
     const question = userInput.value.trim();
     if (question) {
@@ -52,23 +54,42 @@ document.addEventListener('DOMContentLoaded', () => {
   async function getAnswer(question) {
     showTypingIndicator();
   
+    // Fetch the context from dummy.json
     const response = await fetch(chrome.runtime.getURL('dummy.json'));
     const data = await response.json();
+  
+    // Format the JSON data into a text-based context
     const context = formatContext(data);
-
+  
+    // Add the user's question to the conversation history
+    conversationHistory.push({ role: "user", content: question });
+  
+    // Trim the conversation history to the last 5 messages
+    const trimmedHistory = conversationHistory.slice(-5);
+  
     const apiUrl = "https://api.openai.com/v1/chat/completions";
-    const apiKey = ""; // Replace with your actual OpenAI API key
-
+    const apiKey = ""; // API key
+  
+    // Prepare the payload for OpenAI's ChatGPT API
     const payload = {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo", // Use "gpt-4" if you have access
       messages: [
-        { role: "system", content: "You are an insurance policy assistant. Provide detailed and accurate answers based on the given context. Always include all relevant details, such as in-network and out-of-network costs, benefit limits, and any other important information." },
-        { role: "user", content: `Context: ${context}\n\nQuestion: ${question}` }
+        {
+          role: "system",
+          content: "You are an insurance policy assistant. Your task is to provide detailed and accurate answers to user questions based on the following context. Always include all relevant details, such as in-network and out-of-network costs, benefit limits, and any other important information. Do not summarize or omit any details.",
+        },
+        {
+          role: "user",
+          content: `Context: ${context}`,
+        },
+        ...trimmedHistory, // Include the last 5 messages from the conversation history
       ],
-      temperature: 0.5,
+      max_tokens: 500, // Adjust based on your needs
+      temperature: 0.7, // Adjust for creativity vs. accuracy
     };
-
+  
     try {
+      // Make the API call
       const response = await fetch(apiUrl, {
         method: "POST",
         headers: {
@@ -77,12 +98,20 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         body: JSON.stringify(payload),
       });
-
+  
       const data = await response.json();
+      console.log("API Response:", data); // Log the API response
+  
       hideTypingIndicator();
-
-      if (data.choices && data.choices[0] && data.choices[0].message.content) {
-        return data.choices[0].message.content;
+  
+      // Extract the answer from the API response
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        const answer = data.choices[0].message.content;
+  
+        // Add the bot's response to the conversation history
+        conversationHistory.push({ role: "assistant", content: answer });
+  
+        return answer;
       } else {
         return "Sorry, I couldn't find an answer to that question.";
       }
