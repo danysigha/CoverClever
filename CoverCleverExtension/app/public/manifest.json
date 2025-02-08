@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Simple Header Scraper",
+  "description": "Extract headers from the active tab",
+  "version": "1.0",
+  "permissions": ["activeTab", "scripting", "downloads"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "./src/popup/index.html"
+  },
+  "host_permissions": [
+    "https://member.bluecrossma.com/*"
+  ]
+}
+

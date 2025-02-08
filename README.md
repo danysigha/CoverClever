@@ -47,9 +47,42 @@ WORK IN PROGRESS
 
 
 # Object model
+```mermaid
+---
+title: CoverClever
+---
+classDiagram
 
+%% User Management
+class User {
+    - String userId
+    - String firstName
+    - String lastName
+    - String email
+    - JSON medicalConditions
+    - String InsuranceRequirements
+    - Int incomeLevel
+    - List InsuranceBenefits
+    - String passowrd
+    + getProfileData()
+    + updateProfileData()
+}
 
-WORK IN PROGRESS
+%% Insurance Policies
+class InsurancePolicy {
+    - JSON deductibles
+    - JSON benefits
+    - Int score
+    - String comments
+    + getDeductibles()
+    + getBenefits
+    + getScore()
+    + getComments()
+}
+
+%% Associations
+User "1" --> "*" InsurancePolicy : scores
+```
 
 
 # 📖 API Documentation
