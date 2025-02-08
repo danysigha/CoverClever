@@ -4,12 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendBtn = document.getElementById('send-btn');
   const closeBtn = document.getElementById('close-btn');
 
-
   closeBtn.addEventListener('click', () => {
     window.close();
   });
 
-  // Send message
   sendBtn.addEventListener('click', () => {
     const question = userInput.value.trim();
     if (question) {
@@ -21,11 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Add message to chat
   function addMessage(text, sender) {
     const message = document.createElement('div');
     message.classList.add('chat-message', sender);
-    message.textContent = text;
+    message.innerHTML = `<div class="message-text">${text}</div>`;
+    
+    const timestamp = document.createElement('div');
+    timestamp.classList.add('timestamp');
+    timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    message.appendChild(timestamp);
+    
     chatBody.appendChild(message);
     chatBody.scrollTop = chatBody.scrollHeight;
   }
@@ -49,31 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
   async function getAnswer(question) {
     showTypingIndicator();
   
-    // Fetch the context from dummy.json
     const response = await fetch(chrome.runtime.getURL('dummy.json'));
     const data = await response.json();
-  
-    // Determine the relevant category based on the question
     const category = findRelevantCategory(question, data);
   
     if (category) {
-      // Format the relevant section as context
       const context = formatContext({ [category]: data[category] });
-  
-      // Hugging Face API endpoint and model
-      const apiUrl = "https://api-inference.huggingface.co/models/google/flan-t5-large";
-      const apiKey = "here"; // Replace with your API key
-  
+
+      const apiUrl = "https://api.openai.com/v1/chat/completions";
+      const apiKey = ""; // Replace with your actual OpenAI API key
+
       const payload = {
-        inputs: `You are an insurance policy assistant. Your task is to provide detailed and accurate answers to user questions based on the following context. If the question is unclear, ask for clarification. Always include all relevant details from the context.
-  
-  Context: ${context}
-  
-  Question: ${question}`,
+        model: "gpt-3.5-turbo",
+        messages: [
+          { role: "system", content: "You are an insurance policy assistant. Provide detailed and accurate answers based on the given context. Always include all relevant details, such as in-network and out-of-network costs, benefit limits, and any other important information." },
+          { role: "user", content: `Context: ${context}\n\nQuestion: ${question}` }
+        ],
+        temperature: 0.5,
       };
-  
+
       try {
-        // Make the API call
         const response = await fetch(apiUrl, {
           method: "POST",
           headers: {
@@ -82,15 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify(payload),
         });
-  
+
         const data = await response.json();
-        console.log("API Response:", data); // Log the API response
-  
         hideTypingIndicator();
-  
-        // Extract the answer from the API response
-        if (data && data[0] && data[0].generated_text) {
-          return data[0].generated_text;
+
+        if (data.choices && data.choices[0] && data.choices[0].message.content) {
+          return data.choices[0].message.content;
         } else {
           return "Sorry, I couldn't find an answer to that question.";
         }
@@ -104,8 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return "Sorry, I couldn't find any relevant information for your question.";
     }
   }
-  
-  // Helper function to find the relevant category
+
   function findRelevantCategory(question, data) {
     const lowerQuestion = question.toLowerCase();
     for (const category in data) {
@@ -115,8 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return null;
   }
-  
-  // Helper function to format the context
+
   function formatContext(data) {
     let context = "";
     for (const category in data) {
@@ -131,35 +124,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return context;
   }
-  function addMessage(text, sender) {
-    const message = document.createElement('div');
-    message.classList.add('chat-message', sender);
-  
-    if (sender === 'bot') {
-      message.innerHTML = `
-        <div class="message-text">${text}</div>
-      `;
-    } else {
-      message.innerHTML = `
-        <div class="message-text">${text}</div>
-      `;
-    }
-  
-    const timestamp = document.createElement('div');
-    timestamp.classList.add('timestamp');
-    timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    message.appendChild(timestamp);
-  
-    chatBody.appendChild(message);
-    chatBody.scrollTop = chatBody.scrollHeight;
-  }
 
-  // handle minimize button
   const minimizeBtn = document.getElementById('minimize-btn');
-
-minimizeBtn.addEventListener('click', () => {
-  document.querySelector('.chat-body').classList.toggle('hidden');
-  document.querySelector('.chat-input').classList.toggle('hidden');
-  minimizeBtn.textContent = document.querySelector('.chat-body').classList.contains('hidden') ? '+' : '−';
-});
+  minimizeBtn.addEventListener('click', () => {
+    document.querySelector('.chat-body').classList.toggle('hidden');
+    document.querySelector('.chat-input').classList.toggle('hidden');
+    minimizeBtn.textContent = document.querySelector('.chat-body').classList.contains('hidden') ? '+' : '−';
+  });
 });
