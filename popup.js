@@ -45,61 +45,92 @@ document.addEventListener('DOMContentLoaded', () => {
       typingIndicator.remove();
     }
   }
-  
-  // Update the getAnswer function
+
   async function getAnswer(question) {
     showTypingIndicator();
   
     // Fetch the context from dummy.json
     const response = await fetch(chrome.runtime.getURL('dummy.json'));
-    const dummyData = await response.json();
-    const context = dummyData.context;
+    const data = await response.json();
   
-    // Hugging Face API endpoint and model
-    const apiUrl = "https://api-inference.huggingface.co/models/google/flan-t5-large";
-    const apiKey = "My API key xyz"; // Replace with your API key
+    // Determine the relevant category based on the question
+    const category = findRelevantCategory(question, data);
   
-    // Prepare the payload with context
-    const payload = {
-      inputs: `Context: ${context}. Question: ${question}`,
-    };
+    if (category) {
+      // Format the relevant section as context
+      const context = formatContext({ [category]: data[category] });
   
-    try {
-      // Make the API call
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      // Hugging Face API endpoint and model
+      const apiUrl = "https://api-inference.huggingface.co/models/google/flan-t5-large";
+      const apiKey = "here"; // Replace with your API key
   
-      const data = await response.json();
-      console.log("API Response:", data); // Log the API response
+      const payload = {
+        inputs: `You are an insurance policy assistant. Your task is to provide detailed and accurate answers to user questions based on the following context. If the question is unclear, ask for clarification. Always include all relevant details from the context.
   
-      hideTypingIndicator();
+  Context: ${context}
   
-      // Handle model loading error
-      if (data.error && data.error.includes("is currently loading")) {
-        return "The model is still loading. Please try again in a few seconds.";
+  Question: ${question}`,
+      };
+  
+      try {
+        // Make the API call
+        const response = await fetch(apiUrl, {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+  
+        const data = await response.json();
+        console.log("API Response:", data); // Log the API response
+  
+        hideTypingIndicator();
+  
+        // Extract the answer from the API response
+        if (data && data[0] && data[0].generated_text) {
+          return data[0].generated_text;
+        } else {
+          return "Sorry, I couldn't find an answer to that question.";
+        }
+      } catch (error) {
+        hideTypingIndicator();
+        console.error("Error fetching answer:", error);
+        return "Sorry, something went wrong. Please try again.";
       }
-  
-      // Extract the answer from the API response
-      if (data && data[0] && data[0].generated_text) {
-        return data[0].generated_text;
-      } else {
-        // Fallback to dummy.json
-        return dummyData.questions[question] || "Sorry, I couldn't find an answer to that question.";
-      }
-    } catch (error) {
+    } else {
       hideTypingIndicator();
-      console.error("Error fetching answer:", error);
-      // Fallback to dummy.json
-      return dummyData.questions[question] || "Sorry, something went wrong. Please try again.";
+      return "Sorry, I couldn't find any relevant information for your question.";
     }
   }
-
+  
+  // Helper function to find the relevant category
+  function findRelevantCategory(question, data) {
+    const lowerQuestion = question.toLowerCase();
+    for (const category in data) {
+      if (lowerQuestion.includes(category.toLowerCase())) {
+        return category;
+      }
+    }
+    return null;
+  }
+  
+  // Helper function to format the context
+  function formatContext(data) {
+    let context = "";
+    for (const category in data) {
+      context += `**${category}**\n`;
+      for (const subCategory in data[category].content) {
+        context += `- ${subCategory}:\n`;
+        const details = data[category].content[subCategory];
+        for (const key in details) {
+          context += `  - ${key}: ${details[key]}\n`;
+        }
+      }
+    }
+    return context;
+  }
   function addMessage(text, sender) {
     const message = document.createElement('div');
     message.classList.add('chat-message', sender);
