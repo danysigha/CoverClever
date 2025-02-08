@@ -1,26 +1,3 @@
-// document.getElementById("processButton").addEventListener("click", () => {
-//   const fileInput = document.getElementById("fileInput");
-//   const file = fileInput.files[0];
-
-//   if (!file) {
-//     document.getElementById("status").textContent = "Please select a file.";
-//     return;
-//   }
-
-//   const reader = new FileReader();
-//   reader.onload = (event) => {
-//     const fileContent = event.target.result;
-
-//     chrome.runtime.sendMessage(
-//       { type: "processFile", content: fileContent },
-//       (response) => {
-//         document.getElementById("status").textContent = response.message;
-//       }
-//     );
-//   };
-//   reader.readAsText(file);
-// });
-
 document.getElementById("processButton").addEventListener("click", () => {
   const fileInput = document.getElementById("fileInput");
   const file = fileInput.files[0];
@@ -87,12 +64,3 @@ document.getElementById("processButton").addEventListener("click", () => {
     document.getElementById("status").textContent = "Unsupported file type.";
   }
 });
-
-// document.getElementById("openModal").addEventListener("click", () => {
-//   chrome.windows.create({
-//     url: "/options/options.html",
-//     type: "popup",
-//     width: 400,
-//     height: 300,
-//   });
-// });

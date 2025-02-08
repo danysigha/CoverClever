@@ -1,23 +1,47 @@
+/* eslint-disable no-undef */
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import questions from "../assets/questions";
 
 export default function Questionnaire() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [responses, setResponses] = useState({});
 
   const onSubmit = async () => {
     try {
-      const { data } = await axios.post("/preferences", {responses});
+      const { data } = await axios.post("/preferences", { responses });
       if (data.error) {
         toast.error(data.error);
       } else {
         setResponses({});
         toast.success("Responses submitted!");
-        navigate("/dashboard");
+        
+        // Communicate with extension
+        if (typeof chrome !== 'undefined' && chrome.runtime) {
+          chrome.runtime.sendMessage(
+            "obhfnegefpkpoicjhfafbibcocbakkoo",
+            { 
+              type: "QUESTIONNAIRE_COMPLETE",
+              preferences: responses 
+            },
+            (response) => {
+              console.log(response);
+              if (response.status === "success") {
+                // window.close();
+                chrome.runtime.sendMessage(
+                  "obhfnegefpkpoicjhfafbibcocbakkoo",
+                  { type: "CLOSE_TAB" },
+                  (closeResponse) => {
+                    console.log(closeResponse);
+                  }
+                );
+              }
+            }
+          );
+        }
       }
     } catch (err) {
       console.log(err);

@@ -6,17 +6,19 @@ import { useNavigate } from "react-router-dom";
 export default function Register() {
   const navigate = useNavigate();
   const [data, setData] = useState({
-    name: "",
+    first_name: "",
+    last_name: "",
     email: "",
     password: "",
   });
 
   const registerUser = async (e) => {
     e.preventDefault();
-    const { name, email, password } = data;
+    const { first_name, last_name, email, password } = data;
     try {
       const { data } = await axios.post("/register", {
-        name,
+        first_name,
+        last_name,
         email,
         password,
       });
@@ -35,21 +37,28 @@ export default function Register() {
   return (
     <div>
       <form onSubmit={registerUser}>
-        <label>Name</label>
+        <label>First name: </label>
         <input
           type="text"
-          placeholder="Enter name..."
-          value={data.name}
-          onChange={(e) => setData({ ...data, name: e.target.value })}
+          placeholder="Enter first name..."
+          value={data.first_name}
+          onChange={(e) => setData({ ...data, first_name: e.target.value })}
         />
-        <label>Email</label>
+        <label>Last name: </label>
+        <input
+          type="text"
+          placeholder="Enter last name..."
+          value={data.last_name}
+          onChange={(e) => setData({ ...data, last_name: e.target.value })}
+        />
+        <label>Email: </label>
         <input
           type="email"
           placeholder="Enter email..."
           value={data.email}
           onChange={(e) => setData({ ...data, email: e.target.value })}
         />
-        <label>Password</label>
+        <label>Password: </label>
         <input
           type="password"
           placeholder="Enter password..."

@@ -13,7 +13,8 @@ const loginUser = async (req, res) => {
         }
         const match = await comparePassword(password, user.password);
         if (match) {
-            jwt.sign({email: user.email, id: user._id, name: user.name}, process.env.JWT_SECRET, {}, (err, token) => {
+            jwt.sign({email: user.email, id: user._id, first_name: user.first_name, 
+                last_name: user.last_name}, process.env.JWT_SECRET, {}, (err, token) => {
                 if (err) throw err;
                 res.cookie("token", token).json(user);
             })
@@ -29,10 +30,15 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
     try {
-        const {name, email, password} = req.body;
-        if (!name) {
+        const {first_name, last_name, email, password} = req.body;
+        if (!first_name) {
             return res.json({
-                error: "Name is required"
+                error: "First name is required"
+            })
+        }
+        if (!last_name) {
+            return res.json({
+                error: "Last name is required"
             })
         }
         if (!password) {
@@ -49,7 +55,8 @@ const registerUser = async (req, res) => {
 
         const hashedPassword = await hashPassword(password);
         const user = new User({
-            name,
+            first_name,
+            last_name,
             email,
             password: hashedPassword,
         })

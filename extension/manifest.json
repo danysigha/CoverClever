@@ -3,7 +3,14 @@
   "description": "A mock Chrome extension that supports file uploading",
   "version": "1.0",
   "manifest_version": 3,
-  "permissions": ["storage"],
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab"
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:5173/*"]
+  },
   "action": {
     "default_popup": "/popup/popup.html",
     "default_icon": "images/icon.png"

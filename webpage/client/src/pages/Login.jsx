@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -27,7 +28,23 @@ export default function Login() {
         setData({});
         await fetchUser();
         toast.success("Login success!");
-        navigate("/dashboard");
+        // navigate("/questionnaire");
+        
+        // Communicate with extension
+        if (chrome.runtime) {
+          chrome.runtime.sendMessage(
+            "obhfnegefpkpoicjhfafbibcocbakkoo",
+            { 
+              type: "LOGIN_SUCCESS",
+              userData: data 
+            },
+            (response) => {
+              if (response.status === "success") {
+                navigate("/questionnaire");
+              }
+            }
+          );
+        }
       }
     } catch (err) {
       console.log(err);
