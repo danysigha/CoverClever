@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const sendBtn = document.getElementById('send-btn');
   const closeBtn = document.getElementById('close-btn');
 
-
   closeBtn.addEventListener('click', () => {
     window.close();
   });
 
-  // Send message
+  let conversationHistory = [];
+
   sendBtn.addEventListener('click', () => {
     const question = userInput.value.trim();
     if (question) {
@@ -21,11 +21,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Add message to chat
   function addMessage(text, sender) {
     const message = document.createElement('div');
     message.classList.add('chat-message', sender);
-    message.textContent = text;
+    message.innerHTML = `<div class="message-text">${text}</div>`;
+    
+    const timestamp = document.createElement('div');
+    timestamp.classList.add('timestamp');
+    timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    message.appendChild(timestamp);
+    
     chatBody.appendChild(message);
     chatBody.scrollTop = chatBody.scrollHeight;
   }
@@ -45,23 +50,42 @@ document.addEventListener('DOMContentLoaded', () => {
       typingIndicator.remove();
     }
   }
-  
-  // Update the getAnswer function
+
   async function getAnswer(question) {
     showTypingIndicator();
   
     // Fetch the context from dummy.json
     const response = await fetch(chrome.runtime.getURL('dummy.json'));
-    const dummyData = await response.json();
-    const context = dummyData.context;
+    const data = await response.json();
   
-    // Hugging Face API endpoint and model
-    const apiUrl = "https://api-inference.huggingface.co/models/google/flan-t5-large";
-    const apiKey = "My API key xyz"; // Replace with your API key
+    // Format the JSON data into a text-based context
+    const context = formatContext(data);
   
-    // Prepare the payload with context
+    // Add the user's question to the conversation history
+    conversationHistory.push({ role: "user", content: question });
+  
+    // Trim the conversation history to the last 5 messages
+    const trimmedHistory = conversationHistory.slice(-5);
+  
+    const apiUrl = "https://api.openai.com/v1/chat/completions";
+    const apiKey = ""; // API key
+  
+    // Prepare the payload for OpenAI's ChatGPT API
     const payload = {
-      inputs: `Context: ${context}. Question: ${question}`,
+      model: "gpt-3.5-turbo", // Use "gpt-4" if you have access
+      messages: [
+        {
+          role: "system",
+          content: "You are an insurance policy assistant. Your task is to provide detailed and accurate answers to user questions based on the following context. Always include all relevant details, such as in-network and out-of-network costs, benefit limits, and any other important information. Do not summarize or omit any details.",
+        },
+        {
+          role: "user",
+          content: `Context: ${context}`,
+        },
+        ...trimmedHistory, // Include the last 5 messages from the conversation history
+      ],
+      max_tokens: 500, // Adjust based on your needs
+      temperature: 0.7, // Adjust for creativity vs. accuracy
     };
   
     try {
@@ -80,55 +104,43 @@ document.addEventListener('DOMContentLoaded', () => {
   
       hideTypingIndicator();
   
-      // Handle model loading error
-      if (data.error && data.error.includes("is currently loading")) {
-        return "The model is still loading. Please try again in a few seconds.";
-      }
-  
       // Extract the answer from the API response
-      if (data && data[0] && data[0].generated_text) {
-        return data[0].generated_text;
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        const answer = data.choices[0].message.content;
+  
+        // Add the bot's response to the conversation history
+        conversationHistory.push({ role: "assistant", content: answer });
+  
+        return answer;
       } else {
-        // Fallback to dummy.json
-        return dummyData.questions[question] || "Sorry, I couldn't find an answer to that question.";
+        return "Sorry, I couldn't find an answer to that question.";
       }
     } catch (error) {
       hideTypingIndicator();
       console.error("Error fetching answer:", error);
-      // Fallback to dummy.json
-      return dummyData.questions[question] || "Sorry, something went wrong. Please try again.";
+      return "Sorry, something went wrong. Please try again.";
     }
   }
 
-  function addMessage(text, sender) {
-    const message = document.createElement('div');
-    message.classList.add('chat-message', sender);
-  
-    if (sender === 'bot') {
-      message.innerHTML = `
-        <div class="message-text">${text}</div>
-      `;
-    } else {
-      message.innerHTML = `
-        <div class="message-text">${text}</div>
-      `;
+  function formatContext(data) {
+    let context = "";
+    for (const category in data) {
+      context += `**${category}**\n`;
+      for (const subCategory in data[category].content) {
+        context += `- ${subCategory}:\n`;
+        const details = data[category].content[subCategory];
+        for (const key in details) {
+          context += `  - ${key}: ${details[key]}\n`;
+        }
+      }
     }
-  
-    const timestamp = document.createElement('div');
-    timestamp.classList.add('timestamp');
-    timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    message.appendChild(timestamp);
-  
-    chatBody.appendChild(message);
-    chatBody.scrollTop = chatBody.scrollHeight;
+    return context;
   }
 
-  // handle minimize button
   const minimizeBtn = document.getElementById('minimize-btn');
-
-minimizeBtn.addEventListener('click', () => {
-  document.querySelector('.chat-body').classList.toggle('hidden');
-  document.querySelector('.chat-input').classList.toggle('hidden');
-  minimizeBtn.textContent = document.querySelector('.chat-body').classList.contains('hidden') ? '+' : '−';
-});
+  minimizeBtn.addEventListener('click', () => {
+    document.querySelector('.chat-body').classList.toggle('hidden');
+    document.querySelector('.chat-input').classList.toggle('hidden');
+    minimizeBtn.textContent = document.querySelector('.chat-body').classList.contains('hidden') ? '+' : '−';
+  });
 });
