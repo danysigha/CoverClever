@@ -20,11 +20,8 @@ router.use(
 
 
 router.get("/insurance-policies", authenticateUser, getInsurancePolicies);
-
 router.post("/insurance-policies", authenticateUser, addInsurancePolicy);
-
 router.get("/insurance-policy/:policyId", authenticateUser, getInsurancePolicyById);
-
 router.delete("/insurance-policy/:policyId", authenticateUser, deleteInsurancePolicy);
 
 module.exports = router;

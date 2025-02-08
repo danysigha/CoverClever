@@ -1,10 +1,11 @@
-const PolicyModel = require("../models/PolicyModel");
+const PolicyModel = require("../models/policy");
 
 // get all insurance policies for the authenticated user
 const getInsurancePolicies = async (req, res) => {
   try {
     const userId = req.user.id;
     const policies = await PolicyModel.find({ user: userId });
+    console.log(userId, policies);
     if (!policies || policies.length === 0) {
       return res.status(404).json({ message: "No policies found" });
     }
