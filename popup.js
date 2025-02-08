@@ -54,60 +54,43 @@ document.addEventListener('DOMContentLoaded', () => {
   
     const response = await fetch(chrome.runtime.getURL('dummy.json'));
     const data = await response.json();
-    const category = findRelevantCategory(question, data);
-  
-    if (category) {
-      const context = formatContext({ [category]: data[category] });
+    const context = formatContext(data);
 
-      const apiUrl = "https://api.openai.com/v1/chat/completions";
-      const apiKey = ""; // Replace with your actual OpenAI API key
+    const apiUrl = "https://api.openai.com/v1/chat/completions";
+    const apiKey = ""; // Replace with your actual OpenAI API key
 
-      const payload = {
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: "You are an insurance policy assistant. Provide detailed and accurate answers based on the given context. Always include all relevant details, such as in-network and out-of-network costs, benefit limits, and any other important information." },
-          { role: "user", content: `Context: ${context}\n\nQuestion: ${question}` }
-        ],
-        temperature: 0.5,
-      };
+    const payload = {
+      model: "gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "You are an insurance policy assistant. Provide detailed and accurate answers based on the given context. Always include all relevant details, such as in-network and out-of-network costs, benefit limits, and any other important information." },
+        { role: "user", content: `Context: ${context}\n\nQuestion: ${question}` }
+      ],
+      temperature: 0.5,
+    };
 
-      try {
-        const response = await fetch(apiUrl, {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(payload),
-        });
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
 
-        const data = await response.json();
-        hideTypingIndicator();
-
-        if (data.choices && data.choices[0] && data.choices[0].message.content) {
-          return data.choices[0].message.content;
-        } else {
-          return "Sorry, I couldn't find an answer to that question.";
-        }
-      } catch (error) {
-        hideTypingIndicator();
-        console.error("Error fetching answer:", error);
-        return "Sorry, something went wrong. Please try again.";
-      }
-    } else {
+      const data = await response.json();
       hideTypingIndicator();
-      return "Sorry, I couldn't find any relevant information for your question.";
-    }
-  }
 
-  function findRelevantCategory(question, data) {
-    const lowerQuestion = question.toLowerCase();
-    for (const category in data) {
-      if (lowerQuestion.includes(category.toLowerCase())) {
-        return category;
+      if (data.choices && data.choices[0] && data.choices[0].message.content) {
+        return data.choices[0].message.content;
+      } else {
+        return "Sorry, I couldn't find an answer to that question.";
       }
+    } catch (error) {
+      hideTypingIndicator();
+      console.error("Error fetching answer:", error);
+      return "Sorry, something went wrong. Please try again.";
     }
-    return null;
   }
 
   function formatContext(data) {
