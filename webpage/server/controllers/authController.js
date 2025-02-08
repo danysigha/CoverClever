@@ -17,8 +17,8 @@ const loginUser = async (req, res) => {
                 {
                     email: user.email, 
                     id: user._id, 
-                    first_name: user.first_name, 
-                    last_name: user.last_name
+                    firstName: user.firstName, 
+                    lastName: user.lastName
                 }, 
                 process.env.JWT_SECRET,
                 { expiresIn: '24h' }
@@ -31,8 +31,8 @@ const loginUser = async (req, res) => {
                     user: {
                         id: user._id,
                         email: user.email,
-                        first_name: user.first_name,
-                        last_name: user.last_name
+                        firstName: user.firstName,
+                        lastName: user.lastName
                     }
                 });
         } else {
@@ -50,13 +50,13 @@ const loginUser = async (req, res) => {
 
 const registerUser = async (req, res) => {
     try {
-        const {first_name, last_name, email, password} = req.body;
-        if (!first_name) {
+        const {firstName, lastName, email, password} = req.body;
+        if (!firstName) {
             return res.json({
                 error: "First name is required"
             })
         }
-        if (!last_name) {
+        if (!lastName) {
             return res.json({
                 error: "Last name is required"
             })
@@ -75,8 +75,8 @@ const registerUser = async (req, res) => {
 
         const hashedPassword = await hashPassword(password);
         const user = new User({
-            first_name,
-            last_name,
+            firstName,
+            lastName,
             email,
             password: hashedPassword,
         })

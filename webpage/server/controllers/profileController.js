@@ -23,10 +23,9 @@ const updateProfile = async (req, res) => {
     try {
         // Fields that are allowed to be updated
         const allowedUpdates = [
-            'first_name',
-            'last_name',
+            'firstName',
+            'lastName',
             'email',
-            'preferences'
         ];
 
         // Filter out any fields that aren't in allowedUpdates

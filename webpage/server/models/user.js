@@ -2,15 +2,21 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
-    first_name: String,
-    last_name: String,
     email: {
         type: String,
         unique: true,
     },
+    firstName: String,
+    lastName: String,
     password: String,
-    preferences: { type: Object, default: {} }
-})
+    age: Number,
+    incomeLevel: Number,
+    expectedCost: Number,
+    medicalConditions: { type: Object, default: {} },
+    desiredBenefits: { type: Object, default: {} },
+    insurancePreferenceExplanation: String,
+    // preferences: { type: Object, default: {} }
+});
 
 const UserModel = mongoose.model("User", userSchema);
 
