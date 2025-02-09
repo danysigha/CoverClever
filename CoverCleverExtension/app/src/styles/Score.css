@@ -1,0 +1,19 @@
+.page-title {
+  color: #333;
+  margin-top: 2rem;
+  font-size: 24px;
+  text-align: center;
+}
+
+/* Specifically target the Toolbar */
+.MuiToolbar-root {
+  min-height: 48px !important;
+}
+
+/* Ensure AppBar sits at the very top */
+.MuiAppBar-root {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+}
