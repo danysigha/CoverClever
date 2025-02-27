@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Navbar } from "../components/Navbar";
 import "../styles/Score.css"; 
 
 const Score = () => {
@@ -57,7 +56,7 @@ const Score = () => {
 
   return (
     <div>
-      <Navbar />
+      {/* <Navbar /> */}
       <div className="flex flex-col items-center justify-center min-h-screen -mt-16 px-4">
         <h1 className="text-4xl font-bold mb-8 text-center">Add a new policy</h1>
         <button

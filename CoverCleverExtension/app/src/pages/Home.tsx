@@ -109,7 +109,6 @@ const Home: React.FC = () => {
 
   return (
     <div className="home-container">
-      <Navbar />
       <h1 className="page-title">Scored Insurance Plans</h1>
       {renderContent()}
     </div>

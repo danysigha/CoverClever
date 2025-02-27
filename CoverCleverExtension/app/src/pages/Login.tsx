@@ -33,16 +33,10 @@ import "../styles/Login.css";
 import { loginUser } from "../services/authService";
 import { User } from '../types/User';
 import { AUTH_CONSTANTS } from '../constants/auth';
-import { Navbar } from '../components/Navbar';
 import coverCleverLogo from "../assets/covercleverlogo.png";  // Add this import
 
-
-interface AuthenticatedUser extends User {
-  token: string;  // Add token for authenticated users
-}
-
 interface LoginProps {
-  setUser: (user: AuthenticatedUser) => void;
+  setUser: (user: User) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ setUser }) => {
@@ -126,9 +120,9 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
 
     // Validate both fields
     const isEmailValid = validateEmail(email);
-    // const isPasswordValid = validatePassword(password);
+    const isPasswordValid = validatePassword(password);
 
-    if (!isEmailValid) {
+    if (!isEmailValid || !isPasswordValid) {
       setIsLoading(false);
       return;
     }
@@ -138,7 +132,7 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
       const response = await loginUser(email, password);
 
       // Ensure the response matches our AuthenticatedUser type
-      const authenticatedUser: AuthenticatedUser = {
+      const authenticatedUser: User = {
         firstName: response.firstName,
         lastName: response.lastName,
         email: response.email,
@@ -183,7 +177,7 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
   return (
     
     <div className="login-container">
-        <Navbar />
+        {/* <Navbar /> */}
         <img 
           alt="cover clever logo" 
           src={coverCleverLogo}
