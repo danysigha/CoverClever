@@ -14,17 +14,17 @@
 } */
 
 /* Specifically target the Toolbar */
-.MuiToolbar-root {
+/* .MuiToolbar-root {
   min-height: 48px !important;
-}
+} */
 
 /* Ensure AppBar sits at the very top */
-.MuiAppBar-root {
+/* .MuiAppBar-root {
   position: absolute !important;
   top: 0 !important;
   left: 0 !important;
   right: 0 !important;
-}
+} */
 
 .login-logo {
   width: 10em;

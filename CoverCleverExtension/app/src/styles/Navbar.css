@@ -1,28 +1,36 @@
-.navbar-logo {
+/* .navbar-logo {
   display: flex;
   align-items: center;
-  padding-left: 8px;  /* Add some padding to the left */
-}
+  padding-left: 8px;  
+} */
 
-.navbar-logo img {
+/* .navbar-logo img {
   height: 32px;
   width: auto;
   object-fit: contain;
   user-select: none;
-  user-select: none;  /* Prevents text/image selection */
-  -webkit-user-drag: none;  /* Prevents dragging in webkit browsers */
-  -webkit-user-select: none;  /* Safari specific */
-  -moz-user-select: none;  /* Firefox specific */
-  -ms-user-select: none;  /* IE/Edge specific */
-  pointer-events: none;  /* Prevents all click/drag events */
-}
+  user-select: none;  
+  -webkit-user-drag: none;  
+  -webkit-user-select: none;  
+  -moz-user-select: none;  
+  -ms-user-select: none;  
+  pointer-events: none;  
+} */
 
-.navbar-title {
+/* .navbar-title {
   color: white;
-  user-select: none;  /* Make text non-selectable */
-}
+  user-select: none;  
+} */
 
-.MuiToolbar-root {
-  min-height: 48px !important;
+/* .MuiToolbar-root {
+  min-height: 64px !important;
   padding: 0 16px !important;
-}
+} */
+
+/* Ensure AppBar sits at the very top */
+/* .MuiAppBar-root {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+} */
