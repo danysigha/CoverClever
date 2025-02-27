@@ -3,7 +3,7 @@
   "name": "Simple Header Scraper",
   "description": "Extract headers from the active tab",
   "version": "1.0",
-  "permissions": ["activeTab", "scripting", "downloads"],
+  "permissions": ["activeTab", "scripting", "downloads", "storage"],
   "background": {
     "service_worker": "background.js"
   },

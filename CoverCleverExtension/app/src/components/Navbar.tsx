@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import "../styles/Navbar.css";
 import coverCleverLogo from "../assets/covercleverlogo.png"; // Import the logo
-
+import AddBoxIcon from '@mui/icons-material/AddBox';
 
 import {
   AppBar,
@@ -29,7 +29,11 @@ export const Navbar: React.FC<NavBarProps> = () => {
     const navigate = useNavigate();
 
     const handleAccountSettingsOpen = () => {
-        navigate('/settings'); // Navigate to settings page
+        navigate('/profile'); // Navigate to settings page
+    };
+
+    const handleAddInsurance = () => {
+        navigate('/score'); // Navigate to settings page
     };
 
     const handleOpenInNewTab = () => {
@@ -70,6 +74,13 @@ export const Navbar: React.FC<NavBarProps> = () => {
                         aria-label="open in new tab"
                     >
                         <OpenInNewIcon />
+                    </IconButton>
+                    <IconButton
+                        onClick={handleAddInsurance}
+                        color="inherit"
+                        aria-label="open in new tab"
+                    >
+                        <AddBoxIcon />
                     </IconButton>
                     <IconButton
                         onClick={handleAccountSettingsOpen}

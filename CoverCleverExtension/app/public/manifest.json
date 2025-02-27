@@ -9,7 +9,7 @@
     "192": "icons/icon192.png",
     "512": "icons/icon512.png"
   },
-  "permissions": ["activeTab", "scripting", "downloads"],
+  "permissions": ["activeTab", "scripting", "downloads", "storage"],
   "background": {
     "service_worker": "background.js"
   },
@@ -25,7 +25,8 @@
     "default_height": 700
   },
   "host_permissions": [
-    "https://member.bluecrossma.com/*"
+    "https://member.bluecrossma.com/*",
+    "http://localhost:8000/*"
   ]
 }
 

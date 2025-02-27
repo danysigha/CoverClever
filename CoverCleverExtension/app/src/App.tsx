@@ -13,16 +13,25 @@ import './App.css'
 
 const App: React.FC = () =>  {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Clear session if the page is refreshed
+    // Check for existing auth on mount
     const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      localStorage.removeItem("user");
-      localStorage.removeItem("token");
-      setUser(null);
+    const token = localStorage.getItem("token");
+    
+    if (storedUser && token) {
+      setUser(JSON.parse(storedUser));
     }
+    setIsLoading(false);
   }, []);
+
+  // Protected Route wrapper component
+  const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+    if (isLoading) return <div>Loading...</div>;
+    if (!user) return <Navigate to="/login" />;
+    return <>{children}</>;
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -40,11 +49,22 @@ const App: React.FC = () =>  {
         />
       )} */}
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        {/* <Route path="/register" element={<Register />} /> */}
-        <Route path="/score" element={<Score />} /> 
-        <Route path="/profile" element={<Profile />} /> 
+        <Route path="/login" element={<Login setUser={setUser} />} />
+        <Route path="/" element={
+          <ProtectedRoute>
+            <Home setUser={setUser} />
+          </ProtectedRoute>
+        } />
+        <Route path="/score" element={
+          <ProtectedRoute>
+            <Score />
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <Profile email={user?.email || ''} onLogout={() => setUser(null)} />
+          </ProtectedRoute>
+        } />
       </Routes>
     </HashRouter>
   )

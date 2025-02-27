@@ -126,9 +126,9 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
 
     // Validate both fields
     const isEmailValid = validateEmail(email);
-    const isPasswordValid = validatePassword(password);
+    // const isPasswordValid = validatePassword(password);
 
-    if (!isEmailValid || !isPasswordValid) {
+    if (!isEmailValid) {
       setIsLoading(false);
       return;
     }
@@ -151,15 +151,12 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
 
       setUser(authenticatedUser); // Update user state
 
-      // Only store necessary user data in localStorage
-      const userForStorage = {
-        email: authenticatedUser.email,
-        firstName: authenticatedUser.firstName,
-        lastName: authenticatedUser.lastName
-      };
-
-      localStorage.setItem("user", JSON.stringify(userForStorage));
-      localStorage.setItem("token", authenticatedUser.token); // Store token for API requests
+      // Store in localStorage for the popup
+      localStorage.setItem("user", JSON.stringify(authenticatedUser));
+      localStorage.setItem("token", authenticatedUser.token);
+      
+      // Also store in chrome.storage for the background script
+      await chrome.storage.local.set({ token: authenticatedUser.token });
 
     //   alert("Login successful!");
 

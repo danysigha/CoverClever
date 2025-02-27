@@ -81,3 +81,9 @@ const Score = () => {
 }
 
 export default Score;
+
+
+
+
+// In your background.js or popup.js file
+
