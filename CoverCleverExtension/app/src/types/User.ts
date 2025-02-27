@@ -7,4 +7,5 @@ export interface User {
     insurancePreferenceExplanation: string;
     incomeLevel: number;
     desiredBenefits: object;
+    token: string;
   }
