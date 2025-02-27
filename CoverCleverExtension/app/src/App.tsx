@@ -107,31 +107,3 @@ const App: React.FC = () => {
 };
 
 export default App
-
-
-// return (
-//   <ThemeProvider theme={theme}>
-//     <CssBaseline />
-//     <HashRouter>
-//       {showNavbar && <Navbar user={user} title="Cover Clever" />}
-//       <Routes>
-//         <Route path="/login" element={<Login setUser={setUser} />} />
-//         <Route path="/" element={
-//           <ProtectedRoute>
-//             <Home />
-//           </ProtectedRoute>
-//         } />
-//         <Route path="/score" element={
-//           <ProtectedRoute>
-//             <Score />
-//           </ProtectedRoute>
-//         } />
-//         <Route path="/profile" element={
-//           <ProtectedRoute>
-//             <Profile email={user?.email || ''} onLogout={() => handleLogout() } />
-//           </ProtectedRoute>
-//         } />
-//       </Routes>
-//     </HashRouter>
-//   </ThemeProvider>
-// );
