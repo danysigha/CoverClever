@@ -8,7 +8,7 @@
  * Features:
  * - Email and password input with validation
  * - Password visibility toggle
- * - Login, Register, and NFC Login functionality
+ * - Login, Register
  *
  * Dependencies:
  * - React
@@ -21,6 +21,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Grid,
+  Box,
   TextField,
   Button,
   Typography,
@@ -35,10 +36,20 @@ import { User } from '../types/User';
 import { AUTH_CONSTANTS } from '../constants/auth';
 import coverCleverLogo from "../assets/covercleverlogo.png";  // Add this import
 
+/**
+ * Props interface for the Login component
+ * @property {Function} setUser - Function to update the user state in parent component
+ */
 interface LoginProps {
   setUser: (user: User) => void;
 }
 
+/**
+ * Login component that handles user authentication
+ * 
+ * @param {LoginProps} props - Component props
+ * @returns {JSX.Element} - Rendered component
+ */
 const Login: React.FC<LoginProps> = ({ setUser }) => {
   // State variables for form inputs and error handling
   const [email, setEmail] = useState("");
@@ -51,22 +62,30 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
+  
   /**
    * Toggles password visibility in the input field
+   * Switches between plain text and masked password display
    */
   const handleClickShowPassword = () => setShowPassword(!showPassword);
 
+  
   /**
    * Prevents default mouse-down behavior on password visibility toggle
+   * This stops the button from taking focus when clicked
+   * 
+   * @param {React.MouseEvent<HTMLButtonElement>} event - The mouse event
    */
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
   /**
-   * Validates the email input
-   * @param email - Email string to validate
-   * @returns boolean - Whether the email is valid
+   * Validates the email input against required and format criteria
+   * Sets appropriate error states and helper text messages
+   * 
+   * @param {string} email - Email string to validate
+   * @returns {boolean} - Whether the email is valid
    */
   const validateEmail = (email: string): boolean => {
     if (!email) {
@@ -86,9 +105,11 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
   };
 
   /**
-   * Validates the password input
-   * @param password - Password string to validate
-   * @returns boolean - Whether the password is valid
+   * Validates the password input against required and length criteria
+   * Sets appropriate error states and helper text messages
+   * 
+   * @param {string} password - Password string to validate
+   * @returns {boolean} - Whether the password is valid
    */
   const validatePassword = (password: string): boolean => {
     if (!password) {
@@ -106,32 +127,36 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
     return true;
   };
 
+  
   /**
    * Handles the login process using email and password
+   * Validates inputs, makes API call, updates state, and navigates on success
    */
   const handleLogin = async () => {
+    // Set loading state to show progress indicator
     setIsLoading(true);
     
-    // Reset error states
+    // Reset error states before validation
     setEmailError(false);
     setPasswordError(false);
     setEmailHelperText("");
     setPasswordHelperText("");
 
-    // Validate both fields
+    // Validate both input fields
     const isEmailValid = validateEmail(email);
     const isPasswordValid = validatePassword(password);
 
+    // Stop if validation fails
     if (!isEmailValid || !isPasswordValid) {
       setIsLoading(false);
       return;
     }
 
     try {
-      // Authenticate user
+      // Call authentication service to verify credentials
       const response = await loginUser(email, password);
 
-      // Ensure the response matches our AuthenticatedUser type
+      // Map API response to User type
       const authenticatedUser: User = {
         firstName: response.firstName,
         lastName: response.lastName,
@@ -143,26 +168,38 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
         token: response.token
       };
 
+      // Update application state with authenticated user
       setUser(authenticatedUser); // Update user state
 
-      // Store in localStorage for the popup
+      // Store auth data in localStorage for persistent sessions
       localStorage.setItem("user", JSON.stringify(authenticatedUser));
       localStorage.setItem("token", authenticatedUser.token);
       
-      // Also store in chrome.storage for the background script
+      // Store token in Chrome storage for extension background script access
       await chrome.storage.local.set({ token: authenticatedUser.token });
 
-    //   alert("Login successful!");
 
-      navigate("/"); // Redirect to home/dashboard
+      // Navigate to home page on successful login
+      navigate("/");
     } catch (error) {
-        const errorMessage = error instanceof Error 
-          ? error.message 
-          : "An error occurred during login";
         
-        setPasswordError(true);
-        setPasswordHelperText(errorMessage);
+        // Check specifically for "user not found" type errors
+        if (error instanceof Error && 
+          (error.message.toLowerCase().includes("user not found") || 
+          error.message.toLowerCase().includes("invalid credentials") ||
+          error.message.toLowerCase().includes("not found") ||
+          error.message.toLowerCase().includes("unauthorized"))) {
+          // Use custom message for authentication failures
+          setPasswordHelperText(AUTH_CONSTANTS.ERROR_MESSAGES.LOGIN_FAILED);
+        } else {
+          // For other errors, show the actual error message
+          const errorMessage = error instanceof Error 
+            ? error.message 
+            : "An error occurred during login";
+          setPasswordHelperText(errorMessage);
+        }
       } finally {
+        // Reset loading state regardless of outcome
         setIsLoading(false);
       }
     };
@@ -177,13 +214,27 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
   return (
     
     <div className="login-container">
-        {/* <Navbar /> */}
-        <img 
-          alt="cover clever logo" 
-          src={coverCleverLogo}
-          className="login-logo"
-          draggable="false"
+        {/* Application logo */}
+        <Box className="logo"
+            component="img"
+            sx={{
+                width: "10em",
+                height: "auto",
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginTop: "4rem",
+                userSelect: "none", /* Prevents text/image selection */
+                webkitUserDrag: "none", /* Prevents dragging in webkit browsers */
+                webkitUserSelect: "none", /* Safari specific */
+                mozUserSelect: "none", /* Firefox specific */
+                msUserSelect: "none", /* IE/Edge specific */
+                pointerEvents: "none" /* Prevents all click/drag events */
+            }}
+            alt="Cover Clever Logo" 
+            src={coverCleverLogo}
         />
+      {/* Login form with submit handler */}
       <form onSubmit={(e) => {
         e.preventDefault();
         handleLogin();
@@ -194,6 +245,8 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
               Cover Clever
             </Typography>
           </Grid>
+
+          {/* Email input field */}
           <Grid item xs={12}>
             <TextField
               InputProps={{
@@ -214,6 +267,8 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
               helperText={emailHelperText}
             />
           </Grid>
+
+          {/* Password input field with visibility toggle */}
           <Grid item xs={12}>
             <TextField
               InputProps={{
@@ -246,7 +301,10 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
               helperText={passwordHelperText}
             />
           </Grid>
+
+          {/* Action buttons container */}
           <Grid item xs={12} className="login-actions">
+            {/* Login button with loading state */}
             <Button
               type="submit"
               disabled={isLoading}
@@ -257,6 +315,8 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
             >
               {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
             </Button>
+
+            {/* Register button for new users */}
             <Button
               sx={{ width: "100%", marginBottom: "10px" }}
               variant="outlined"
