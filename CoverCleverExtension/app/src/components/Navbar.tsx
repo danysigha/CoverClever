@@ -51,7 +51,7 @@ export const Navbar: React.FC<NavBarProps> = (props) => {
                 //padding: "0 16px"  // Increased padding
             }}>
                 {/* Left side - Logo and Name */}
-                <Box display="flex" alignItems="center" paddingLeft={8}>
+                <Box display="flex" alignItems="center" paddingLeft={1}>
                     <Box className="navbar-logo"
                         component="img"
                         sx={{
