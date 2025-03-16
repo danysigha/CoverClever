@@ -1,7 +1,6 @@
 .home-container {
-    /* padding: 20px; */
-    background-color: #E5D9F2;
-    height: 550px;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: 0;
     display: flex;

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Home.css";
-import { Navbar } from '../components/Navbar';
 import { api } from '../services/api';
 
 // interface InsurancePolicy {
@@ -95,10 +94,10 @@ const Home: React.FC = () => {
 
   const renderContent = () => {
     if (isLoading) {
-      return <div className="text-center py-8">Loading...</div>;
+      return <div>Loading...</div>;
     }
     if (error) {
-      return <div className="text-center py-8 text-red-500">Error: {error}</div>;
+      return <div>Error: {error}</div>;
     }
     return (
       <div className="policies-container">
