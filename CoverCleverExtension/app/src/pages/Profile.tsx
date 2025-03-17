@@ -1,15 +1,20 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  Box,
+  TextField
+} from "@mui/material";
+
+import "../styles/Profile.css";
+import { User } from '../types/User';
+import {NestedList} from '../components/NestedList';
 
 interface ProfileProps {
-  email: string;
+  user: User | null;
   onLogout?: () => void; // Callback for logout
 }
 
 const Profile: React.FC<ProfileProps> = (props) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   const handleLogout = () => {
     setLoading(true);
@@ -19,26 +24,129 @@ const Profile: React.FC<ProfileProps> = (props) => {
     setLoading(false);
   };
 
-  return (
-    <div className="container mx-auto p-4">
-      {/* <Navbar/> */}
-      <h1 className="page-title">Profile Settings</h1>
-      {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-      
-      <div className="bg-gray-100 p-6 rounded-lg shadow-lg mb-6 max-w-md mx-auto">
-        <p className="text-lg font-medium mb-2">Current Account:</p>
-        <p className="text-xl text-gray-700">{props.email}</p>
-      </div>
+  const handleEdit = () => {
+    alert("editing...");
+  };
 
-      <div className="text-center">
-        <button
-          onClick={handleLogout}
-          disabled={loading}
-          className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-700 disabled:opacity-50 transition duration-300"
-        >
-          {loading ? "Logging Out..." : "Log Out"}
-        </button>
-      </div>
+  return (
+    <div className="profile-container">
+      <h1 className="page-title">Profile Settings</h1>     
+      <Box display={"flex"} flexDirection={"column"} gap={2}>
+        <Box>
+          <TextField
+            slotProps={{
+              input: {
+                readOnly: true,
+                style: { 
+                  color: "white", 
+                },
+                'aria-label': 'FULL NAME',
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#7b00ff !important" },
+              } // Default border
+            }}
+            label="FULL NAME"
+            variant="outlined"
+            fullWidth
+            value={props.user?.firstName + " " + props.user?.lastName}
+            className="input-field"
+          />
+        </Box>
+
+        <Box>
+          <TextField
+            slotProps={{
+              input: {
+                readOnly: true,
+                style: { color: "white" },
+                'aria-label': 'EMAIL',
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#7b00ff !important" },
+              } // Default border
+            }}
+            label="EMAIL"
+            variant="outlined"
+            fullWidth
+            value={props.user?.email}
+            className="input-field"
+          />
+        </Box>
+
+        <Box>
+          <TextField
+            slotProps={{
+              input: {
+                readOnly: true,
+                style: { color: "white" },
+                'aria-label': 'INCOME LEVEL',
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#7b00ff !important" },
+              } // Default border
+            }}
+            label="INCOME LEVEL"
+            variant="outlined"
+            fullWidth
+            value={props.user?.incomeLevel}
+            className="input-field"
+          />
+        </Box>
+
+        <Box>
+          <TextField
+            slotProps={{
+              input: {
+                readOnly: true,
+                style: { color: "white" },
+                'aria-label': 'INSURANCE PREFERENCE',
+              },
+            }}
+            sx={{
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": { borderColor: "#7b00ff !important" },
+              } // Default border
+            }}
+            label="INSURANCE PREFERENCE"
+            variant="outlined"
+            multiline
+            rows={4} // Adjust the height
+            value={props.user?.insurancePreferenceExplanation}
+            fullWidth
+          />
+        </Box>
+
+        <NestedList user={props.user} />
+      </Box> 
+      
+      <Box display={"flex"} flexDirection={"row"} justifyContent={"space-around"} marginTop={3} marginBottom={1}>
+        <Box>
+          <button
+            onClick={handleLogout}
+            disabled={loading}
+            className="profileButtons"
+          >
+            {loading ? "Logging Out..." : "Log Out"}
+          </button>
+        </Box>
+
+        <Box>
+          <button
+            onClick={handleEdit}
+            disabled={loading}
+            className="profileButtons"
+          >
+            Edit
+          </button>
+        </Box>
+      </Box>
     </div>
   );
 };
