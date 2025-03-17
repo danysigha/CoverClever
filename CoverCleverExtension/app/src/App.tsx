@@ -119,7 +119,7 @@ const AppContent: React.FC<{user: User | null, setUser: React.Dispatch<React.Set
         } />
         <Route path="/profile" element={
           <ProtectedRoute>
-            <Profile email={user?.email || ''} onLogout={handleLogout} />
+            <Profile user={user} onLogout={handleLogout} />
           </ProtectedRoute>
         } />
       </Routes>
@@ -160,6 +160,11 @@ const App: React.FC = () => {
             width: "400px",  // Set full viewport width
             height: "600px", // Set full viewport height
             margin: "0px", // Prevent scrolling if needed
+            "-ms-overflow-style": "none", // IE and Edge
+            "scrollbar-width": "none", // Firefox
+          },
+          "::-webkit-scrollbar": {
+            display: "none",
           },
           "#root": {
             margin: "0px",
