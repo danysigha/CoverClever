@@ -241,7 +241,7 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
       }}>
         <Grid container spacing={3} className="login-content">
           <Grid item xs={12}>
-            <Typography variant="h4" className="login-header">
+            <Typography variant="h4" textAlign={"center"}>
               Cover Clever
             </Typography>
           </Grid>
