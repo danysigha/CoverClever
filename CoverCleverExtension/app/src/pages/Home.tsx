@@ -2,15 +2,17 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Home.css";
 import { api } from '../services/api';
+import {
+  Box,
+  Typography
+} from "@mui/material";
+import { PolicyScore } from '../types/PolicyScore'
+import { ScoreCards } from '../components/ScoreCards'
 
-interface InsurancePolicy {
-  policyId: string;
-  score: number;
-  comments: string;
-}
+// Simplified dummy data for development and testing
+// These mock policies represent different insurance plan options with varying scores and descriptions
 
-// Simplified dummy data
-const dummyPolicies: InsurancePolicy[] = [
+const dummyPolicies: PolicyScore[] = [
   {
     policyId: "BCBS-2024-001",
     score: 85,
@@ -29,7 +31,7 @@ const dummyPolicies: InsurancePolicy[] = [
 ];
 
 const Home: React.FC = () => {
-  const [policies, setPolicies] = useState<any>([]);
+  const [policies, setPolicies] = useState<PolicyScore[]>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -57,66 +59,31 @@ const Home: React.FC = () => {
     fetchPolicies();
   }, [navigate]);
 
-  const handlePolicyClick = (policyId: string) => {
-    // Handle click event - you can navigate to a detail page or show a modal
-    console.log(`Clicked policy: ${policyId}`);
-  };
-
-  const renderPolicyRows = () => {
-    // return policies.insurancePolicies.map((policy) => (
-      return policies.map((policy) => (
-      <div 
-        className="policy-row" 
-        // key={policy._id}
-        // onClick={() => handlePolicyClick(policy._id)}
-        key={policy.policyId}
-        onClick={() => handlePolicyClick(policy.policyId)}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            // handlePolicyClick(policy._id);
-            handlePolicyClick(policy.policyId);
-          }
-        }}
-      >
-        <div className="policy-header">
-          {/* <h3>Policy ID: {policy._id}</h3> */}
-          <h3>Policy ID: {policy.policyId}</h3> 
-          <div className={`policy-score score-${policy.score >= 90 ? 'high' : policy.score >= 70 ? 'medium' : 'low'}`}>
-            Score: {policy.score}
-          </div>
-        </div>
-        
-        <div className="policy-details">
-          <div className="comments">
-            <h4>Analysis</h4>
-            <p>{policy.comments}</p>
-          </div>
-        </div>
-      </div>
-    ));
-  };
+  
 
   const renderContent = () => {
     if (isLoading) {
-      return <div>Loading...</div>;
+      return <Box>Loading...</Box>;
     }
     if (error) {
-      return <div>Error: {error}</div>;
+      return <Box>Error: {error}</Box>;
     }
-    return (
-      <div className="policies-container">
-        {renderPolicyRows()}
-      </div>
-    );
+    if(policies) {
+      return (
+        <Box className="policies-container">
+          <ScoreCards policies={policies} />
+        </Box>
+      );
+    } else {
+      return <Box><Typography>No policies found.</Typography></Box>
+    }
   };
 
   return (
-    <div className="home-container">
-      <h1 className="page-title">Scored Insurance Plans</h1>
+    <Box className="home-container">
+      <Typography variant="h1" className="page-title" sx={{fontSize: "2em", fontWeight: "900", marginBottom: "0.5rem"}}>Scored Insurance Plans</Typography>
       {renderContent()}
-    </div>
+    </Box>
   );
 };
 
