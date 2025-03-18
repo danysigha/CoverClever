@@ -52,7 +52,7 @@ const FileUpload: React.FC = () => {
   return (
     <>
       <Box display="flex" flexDirection="row" gap={4} marginTop={5} marginBottom={2}>
-        <div
+        <Box
           style={{
             border: dragging ? '2px solid #4CAF50' : '2px dashed #ccc',
             padding: '20px',
@@ -64,11 +64,11 @@ const FileUpload: React.FC = () => {
           onDragOver={handleDragOver}
           onDrop={handleDrop}
         >
-          <p>{dragging ? 'Release to upload files' : 'Drag files here to upload'}</p>
-        </div>
+          <Typography variant="body1">{dragging ? 'Release to upload files' : 'Drag files here to upload'}</Typography>
+        </Box>
 
-        <div>
-          <div>
+        <Box>
+          <Box>
             <input
               type="file"
               multiple
@@ -77,28 +77,28 @@ const FileUpload: React.FC = () => {
               id="fileInput"
             />
             <label htmlFor="fileInput" style={{ display: 'block', marginTop: '10px', cursor: 'pointer' }}>
-              Or select files
+              <Typography variant="body1">Or select files</Typography>
             </label>
-          </div>
-          <div style={{ marginTop: '10px' }}>
+          </Box>
+          <Box style={{ marginTop: '10px' }}>
             <button onClick={handleUpload} style={{ padding: '10px 15px', cursor: 'pointer' }}>
               Upload
             </button>
-          </div>
-        </div>
+          </Box>
+        </Box>
       </Box>
-      <div>
+      <Box>
         {files.length > 0 && (
-            <div style={{ marginTop: '20px' }}>
+            <Box style={{ marginTop: '20px' }}>
               <h3>Selected Files:</h3>
               <ul>
                 {files.map((file, index) => (
                   <li key={index}>{file.name}</li>
                 ))}
               </ul>
-            </div>
+            </Box>
           )}
-      </div>
+      </Box>
     </>
   );
 };
@@ -163,20 +163,20 @@ const Score = () => {
   };
 
   return (
-      <div className="score-container">
+      <Box className="score-container">
 
-        <h1 className="page-title">Add a new policy</h1>
+        <Typography className="page-title" sx={{fontSize: "2em", fontWeight: "900", marginBottom: "0.5rem"}}>Add a new policy</Typography>
 
-        <div className="content-container">
-          <div className="instructions">
-            <h2>Instructions</h2>
+        <Box className="content-container">
+          <Box className="instructions">
+            <Typography variant="h2">Instructions</Typography>
             <ol>
-              <li>Navigate to <a href="https://www.bluecrossma.org/" target="_blank">BCBS</a></li>
-              <li>Enter your credentials and Sign in</li>
-              <li>Open the Cover Clever browser extension, select the "Add a health insurance" menu item, then press the "start scraping" icon.</li>
-              <li>(Optional) Upload your insurance benefits description. You can do either steps 3, 4, or both.</li>
+              <li><Typography variant="body1">Navigate to <a href="https://www.bluecrossma.org/" target="_blank">BCBS</a></Typography></li>
+              <li><Typography variant="body1">Enter your credentials and Sign in</Typography></li>
+              <li><Typography variant="body1">Open the Cover Clever browser extension, select the "Add a health insurance" menu item, then press the "start scraping" icon.</Typography></li>
+              <li><Typography variant="body1">(Optional) Upload your insurance benefits description. You can do either steps 3, 4, or both.</Typography></li>
             </ol>
-          </div>
+          </Box>
 
           
           <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
@@ -198,7 +198,7 @@ const Score = () => {
             <FileUpload />
           </div> */}
           
-          <div style={{ textAlign: "center", margin: "1em" }}>
+          <Box style={{ textAlign: "center", margin: "1em" }}>
             <button
               onClick={handleAddPolicy}
               style={{
@@ -210,7 +210,7 @@ const Score = () => {
             >
               Add Insurance Policy
             </button>
-          </div>
+          </Box>
 
     
           {loading && <p className="mt-6 text-xl text-gray-600">Loading...</p>}
@@ -220,8 +220,8 @@ const Score = () => {
               {data}
             </pre>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
     
   );
 }
