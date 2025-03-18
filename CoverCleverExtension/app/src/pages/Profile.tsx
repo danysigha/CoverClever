@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import {
   Box,
-  TextField
+  TextField,
+  Typography
 } from "@mui/material";
 
 import "../styles/Profile.css";
@@ -30,7 +31,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
 
   return (
     <div className="profile-container">
-      <h1 className="page-title">Profile Settings</h1>     
+      <Typography className="page-title" sx={{fontSize: "2em", fontWeight: "900", marginBottom: "0.5rem"}}>Profile Settings</Typography>     
       <Box display={"flex"} flexDirection={"column"} gap={2}>
         <Box>
           <TextField
