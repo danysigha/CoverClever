@@ -15,7 +15,6 @@ import Profile from './pages/Profile';
 import { User } from './types/User';
 
 import './App.css'
-import { Height, Widgets } from "@mui/icons-material";
 
 /**
  * Props interface for the NavBarLayout component
