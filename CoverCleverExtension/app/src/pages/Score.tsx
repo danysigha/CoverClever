@@ -4,26 +4,49 @@ import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import { Typography, Box, IconButton } from '@mui/material';
 
 
-
+/**
+ * FileUpload component that allows users to upload files via drag and drop or file selection.
+ * 
+ * @returns {JSX.Element} The FileUpload component
+ */
 const FileUpload: React.FC = () => {
   const [dragging, setDragging] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
 
-  // Handle the drag events
+  /**
+   * Handles the drag enter event by preventing default behavior and setting dragging state to true.
+   * 
+   * @param {React.DragEvent} e - The drag enter event
+   */
   const handleDragEnter = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(true);
   };
 
+  /**
+   * Handles the drag leave event by preventing default behavior and setting dragging state to false.
+   * 
+   * @param {React.DragEvent} e - The drag leave event
+   */
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(false);
   };
 
+  /**
+   * Handles the drag over event by preventing default behavior.
+   * 
+   * @param {React.DragEvent} e - The drag over event
+   */
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
   };
 
+  /**
+   * Handles the drop event by adding the dropped files to the state.
+   * 
+   * @param {React.DragEvent} e - The drop event
+   */
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     setDragging(false);
@@ -31,7 +54,11 @@ const FileUpload: React.FC = () => {
     setFiles([...files, ...Array.from(newFiles)]);
   };
 
-  // Handle file selection
+  /**
+   * Handles file selection from the file input by adding the selected files to the state.
+   * 
+   * @param {React.ChangeEvent<HTMLInputElement>} e - The file input change event
+   */
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = e.target.files;
     if (newFiles) {
@@ -39,7 +66,10 @@ const FileUpload: React.FC = () => {
     }
   };
 
-  // Handle file upload (simulate it)
+  /**
+   * Simulates file upload by showing an alert with the selected file names.
+   * In a real application, this would send the files to a server or API.
+   */
   const handleUpload = () => {
     if (files.length === 0) {
       alert('No files selected!');
@@ -103,29 +133,46 @@ const FileUpload: React.FC = () => {
   );
 };
 
-
+/**
+ * Score component that provides functionality for adding insurance policies
+ * through file upload or web scraping.
+ * 
+ * @returns {JSX.Element} The Score component
+ */
 const Score = () => {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Handle adding policy
+  /**
+   * Handles adding a policy by showing an alert (placeholder functionality).
+   */
   const handleAddPolicy = () => {
     alert('Policy added!');
       return;
   };
 
+  /**
+   * Initiates the web scraping process by sending messages to the Chrome extension.
+   * Sets loading state while waiting for the response and handles any errors.
+   */
   const handleScrape = () => {
     setLoading(true);
     setData(null);
     setError(null);
 
+    /**
+     * Query for the active tab and send a start message with the URL.
+     */
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         chrome.runtime.sendMessage({ action: "start", url: tabs[0].url }, (response) => {
           console.log(response.status);
         });
     });
 
+    /**
+     * Send a message to start the scraping process and handle the response.
+     */
     chrome.runtime.sendMessage({ action: "start" }, (startResponse) => {
       if (chrome.runtime.lastError) {
         console.error("Chrome runtime error:", chrome.runtime.lastError.message);
@@ -136,6 +183,10 @@ const Score = () => {
       
       console.log("Start response:", startResponse);
 
+      /**
+       * Request the scraped data from the extension's background script.
+       * Falls back to checking local storage if the message response fails.
+       */
       chrome.runtime.sendMessage({ action: "scrapeData" }, (response) => {
         if (chrome.runtime.lastError) {
           console.error("Chrome runtime error:", chrome.runtime.lastError.message);
@@ -178,7 +229,6 @@ const Score = () => {
             </ol>
           </Box>
 
-          
           <Box display="flex" flexDirection="column" alignItems="center" gap={1}>
             <IconButton
               onClick={handleScrape}
@@ -194,9 +244,6 @@ const Score = () => {
           </Box>
           
           <FileUpload />
-          {/* <div style={{ overflowX: "hidden" }}>
-            <FileUpload />
-          </div> */}
           
           <Box style={{ textAlign: "center", margin: "1em" }}>
             <button
@@ -212,7 +259,6 @@ const Score = () => {
             </button>
           </Box>
 
-    
           {loading && <p className="mt-6 text-xl text-gray-600">Loading...</p>}
           {error && <p className="mt-6 text-xl text-red-500">{error}</p>}
           {data && (

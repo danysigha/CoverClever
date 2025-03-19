@@ -9,14 +9,34 @@ import "../styles/Profile.css";
 import { User } from '../types/User';
 import {NestedList} from '../components/NestedList';
 
+/**
+ * Props interface for the Profile component
+ * @interface ProfileProps
+ * @property {User | null} user - The user object containing profile information
+ * @property {Function} [onLogout] - Optional callback function to handle user logout
+ */
 interface ProfileProps {
   user: User | null;
   onLogout?: () => void; // Callback for logout
 }
 
+/**
+ * Profile component displays user information and provides logout functionality
+ * 
+ * @component
+ * @param {ProfileProps} props - Component properties
+ * @returns {JSX.Element} - Rendered Profile component
+ */
 const Profile: React.FC<ProfileProps> = (props) => {
+  /** State to track loading status during logout */
   const [loading, setLoading] = useState<boolean>(false);
 
+  /**
+   * Handles the logout process and calls the provided onLogout callback
+   * 
+   * @function handleLogout
+   * @returns {void}
+   */
   const handleLogout = () => {
     setLoading(true);
     if (props.onLogout) {
@@ -25,6 +45,12 @@ const Profile: React.FC<ProfileProps> = (props) => {
     setLoading(false);
   };
 
+  /**
+   * Handles the profile edit functionality (currently just shows an alert)
+   * 
+   * @function handleEdit
+   * @returns {void}
+   */
   const handleEdit = () => {
     alert("editing...");
   };
@@ -33,6 +59,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
     <div className="profile-container">
       <Typography className="page-title" sx={{fontSize: "2em", fontWeight: "900", marginBottom: "0.5rem"}}>Profile Settings</Typography>     
       <Box display={"flex"} flexDirection={"column"} gap={2}>
+        {/* Full Name field - readonly */}
         <Box>
           <TextField
             slotProps={{
@@ -56,7 +83,8 @@ const Profile: React.FC<ProfileProps> = (props) => {
             className="input-field"
           />
         </Box>
-
+        
+        {/* Email field - readonly */}
         <Box>
           <TextField
             slotProps={{
@@ -79,6 +107,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
           />
         </Box>
 
+        {/* Income Level field - readonly */}
         <Box>
           <TextField
             slotProps={{
@@ -101,6 +130,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
           />
         </Box>
 
+        {/* Insurance Preference field - readonly multiline */}
         <Box>
           <TextField
             slotProps={{
@@ -124,10 +154,13 @@ const Profile: React.FC<ProfileProps> = (props) => {
           />
         </Box>
 
+        {/* User's additional information displayed as nested list */}
         <NestedList user={props.user} />
       </Box> 
       
+      {/* Action buttons container */}
       <Box display={"flex"} flexDirection={"row"} justifyContent={"space-around"} marginTop={3} marginBottom={1}>
+        {/* Logout button */}
         <Box>
           <button
             onClick={handleLogout}
@@ -138,6 +171,7 @@ const Profile: React.FC<ProfileProps> = (props) => {
           </button>
         </Box>
 
+        {/* Edit button */}
         <Box>
           <button
             onClick={handleEdit}

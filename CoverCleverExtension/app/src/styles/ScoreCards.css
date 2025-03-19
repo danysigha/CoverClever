@@ -9,18 +9,15 @@
     margin-bottom: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    /* transition: all 0.2s ease-in-out; */
     user-select: none;  /* Prevent text selection when clicking */
 }
   
 .policy-row:hover {
-    /* transform: translateY(-2px); */
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     background-color: #fafafa;
 }
   
 .policy-row:active {
-    /* transform: translateY(0); */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
   

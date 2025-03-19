@@ -7,6 +7,8 @@ import CircularProgress from "@mui/material/CircularProgress";
 import theme from './theme';
 import { Navbar } from './components/Navbar';
 
+import { logoutUser } from "./services/authService";
+
 import Login from "./pages/Login";
 import Home from './pages/Home';
 import Score from './pages/Score';
@@ -93,8 +95,7 @@ const AppContent: React.FC<{user: User | null, setUser: React.Dispatch<React.Set
    * Handles user logout by clearing localStorage and app state
    */
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
+    logoutUser();
     setUser(null);
     navigate("/login");
   };

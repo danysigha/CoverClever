@@ -7,10 +7,10 @@
 }
 
 .content-container {
-  /* flex: 1; */
-  overflow-x: hidden;
+  /* separates from the stacking context of the rest of the page*/
+  /* Enables sticky positioning of the page title */
+  overflow-x: hidden; 
   position: relative;
-  z-index: 1;
   padding: 0px 16px 16px 16px;
 }
 

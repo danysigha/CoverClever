@@ -1,3 +1,9 @@
+/**
+ * Home component that displays scored insurance plans.
+ * Fetches policy data and displays it using ScoreCards component.
+ * @module Home
+ */
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Home.css";
@@ -9,9 +15,11 @@ import {
 import { PolicyScore } from '../types/PolicyScore'
 import { ScoreCards } from '../components/ScoreCards'
 
-// Simplified dummy data for development and testing
-// These mock policies represent different insurance plan options with varying scores and descriptions
-
+/**
+ * Simplified dummy data for development and testing.
+ * Mock policies represent different insurance plan options with varying scores and descriptions.
+ * @type {PolicyScore[]}
+ */
 const dummyPolicies: PolicyScore[] = [
   {
     policyId: "BCBS-2024-001",
@@ -30,12 +38,22 @@ const dummyPolicies: PolicyScore[] = [
   }
 ];
 
+/**
+ * Home page component that displays insurance policy scores.
+ * Handles authentication, data fetching, loading states and rendering policy cards.
+ * @returns {React.ReactElement} The rendered Home component
+ */
 const Home: React.FC = () => {
   const [policies, setPolicies] = useState<PolicyScore[]>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  /**
+   * Fetches policy data on component mount.
+   * Redirects to login if user is not authenticated.
+   * Currently uses dummy data instead of actual API call for development.
+   */
   useEffect(() => {
     const fetchPolicies = async () => {
       try {
@@ -60,7 +78,10 @@ const Home: React.FC = () => {
   }, [navigate]);
 
   
-
+  /**
+   * Renders appropriate content based on loading state, errors, and data availability.
+   * @returns {React.ReactElement} The content to be rendered
+   */
   const renderContent = () => {
     if (isLoading) {
       return <Box>Loading...</Box>;
