@@ -1,9 +1,11 @@
+import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { UserContext } from "../../context/userContext";
 import { toast } from "react-hot-toast";
+import { User } from "../../../../CoverCleverExtension/app/src/types/User"
 
-export default function Navbar() {
+const Navbar : React.FC = () => {
   const { user, setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -36,3 +38,5 @@ export default function Navbar() {
     </nav>
   );
 }
+
+export default Navbar;

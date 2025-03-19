@@ -1,12 +1,23 @@
+import React from "react";
 import axios from "axios";
 import { createContext, useState, useEffect } from "react";
 import PropTypes from 'prop-types';
+import { User } from "../../../CoverCleverExtension/app/src/types/User";
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const UserContext = createContext({});
+interface UserContextType {
+    user: User | null;
+    setUser: React.Dispatch<React.SetStateAction<User | null>>;
+    fetchUser: () => Promise<void>;
+}
 
-export function UserContextProvider({children}) {
-    const [user, setUser] = useState(null);
+export const UserContext = createContext<UserContextType>({
+    user: null,
+    setUser: () => {},
+    fetchUser: async () => {},
+});
+
+const UserContextProvider = ({ children }: { children: React.ReactNode }) => {
+    const [user, setUser] = useState<User | null >(null);
     
     const fetchUser = async () => {
         try {
@@ -31,3 +42,5 @@ export function UserContextProvider({children}) {
 UserContextProvider.propTypes = {
   children: PropTypes.node.isRequired
 };
+
+export default UserContextProvider;

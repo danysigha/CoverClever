@@ -1,3 +1,4 @@
+import React from "react";
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -6,17 +7,19 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
-import { UserContextProvider } from "../context/userContext";
+import UserContextProvider from "../context/userContext";
 import Dashboard from "./pages/Dashboard";
 import Questionnaire from "./pages/Questionnaire";
 import PrivateRoute from "./components/PrivateRoute";
+import type { AxiosResponse, InternalAxiosRequestConfig } from "axios";
+
 
 axios.defaults.baseURL = "http://localhost:8000";
 // axios.defaults.baseURL = "https://cover-clever.onrender.com";
 axios.defaults.withCredentials = true;
 
 // Add interceptor to add token to all requests
-axios.interceptors.request.use((config) => {
+axios.interceptors.request.use((config : InternalAxiosRequestConfig) => {
     const token = localStorage.getItem('token');
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -25,7 +28,7 @@ axios.interceptors.request.use((config) => {
 });
 
 // Add interceptor to handle token from login response
-axios.interceptors.response.use((response) => {
+axios.interceptors.response.use((response : AxiosResponse) => {
     const authHeader = response.headers['authorization'];
     if (authHeader?.startsWith('Bearer ')) {
         const token = authHeader.substring(7);
@@ -34,7 +37,7 @@ axios.interceptors.response.use((response) => {
     return response;
 });
 
-function App() {
+const App: React.FC = () => {
   return (
     <>
       <UserContextProvider>
