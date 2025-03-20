@@ -1,0 +1,402 @@
+/* eslint-disable no-undef */
+// import axios from "axios"
+import { toast } from "react-hot-toast"
+import { useContext } from "react"
+import { UserContext } from "../../context/userContext"
+import React, { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import {
+  Grid,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  IconButton,
+  InputAdornment,
+  CircularProgress,
+} from "@mui/material"
+import { Visibility, VisibilityOff } from "@mui/icons-material"
+import "../styles/Login.css"
+import { loginUser } from "@coverclever/shared/"
+import { User } from "@coverclever/shared/"
+import { AUTH_CONSTANTS } from "@coverclever/shared/"
+import coverCleverLogo from "../assets/covercleverlogo.png"  // Add this import
+
+/**
+ * Props interface for the Login component
+ * @property {Function} setUser - Function to update the user state in parent component
+ */
+interface LoginProps {
+  setUser: (user: User) => void;
+}
+
+/**
+ * Login component that handles user authentication
+ * 
+ * @param {LoginProps} props - Component props
+ * @returns {JSX.Element} - Rendered component
+ */
+const Login: React.FC<LoginProps> = ({ setUser }) => {
+  // State variables for form inputs and error handling
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [emailHelperText, setEmailHelperText] = useState("");
+  const [passwordHelperText, setPasswordHelperText] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  
+  /**
+   * Toggles password visibility in the input field
+   * Switches between plain text and masked password display
+   */
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
+
+  
+  /**
+   * Prevents default mouse-down behavior on password visibility toggle
+   * This stops the button from taking focus when clicked
+   * 
+   * @param {React.MouseEvent<HTMLButtonElement>} event - The mouse event
+   */
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
+  /**
+   * Validates the email input against required and format criteria
+   * Sets appropriate error states and helper text messages
+   * 
+   * @param {string} email - Email string to validate
+   * @returns {boolean} - Whether the email is valid
+   */
+  const validateEmail = (email: string): boolean => {
+    if (!email) {
+      setEmailError(true);
+      setEmailHelperText(AUTH_CONSTANTS.ERROR_MESSAGES.EMAIL_REQUIRED);
+      return false;
+    }
+    const isValid = AUTH_CONSTANTS.EMAIL_REGEX.test(email);
+    if (!isValid) {
+      setEmailError(true);
+      setEmailHelperText(AUTH_CONSTANTS.ERROR_MESSAGES.EMAIL_INVALID);
+    } else {
+      setEmailError(false);
+      setEmailHelperText("");
+    }
+    return isValid;
+  };
+
+  /**
+   * Validates the password input against required and length criteria
+   * Sets appropriate error states and helper text messages
+   * 
+   * @param {string} password - Password string to validate
+   * @returns {boolean} - Whether the password is valid
+   */
+  const validatePassword = (password: string): boolean => {
+    if (!password) {
+      setPasswordError(true);
+      setPasswordHelperText(AUTH_CONSTANTS.ERROR_MESSAGES.PASSWORD_REQUIRED);
+      return false;
+    }
+    if (password.length < AUTH_CONSTANTS.MIN_PASSWORD_LENGTH) {
+      setPasswordError(true);
+      setPasswordHelperText(AUTH_CONSTANTS.ERROR_MESSAGES.PASSWORD_LENGTH);
+      return false;
+    }
+    setPasswordError(false);
+    setPasswordHelperText("");
+    return true;
+  };
+
+  
+  /**
+   * Handles the login process using email and password
+   * Validates inputs, makes API call, updates state, and navigates on success
+   */
+  const handleLogin = async () => {
+    // Set loading state to show progress indicator
+    setIsLoading(true);
+    
+    // Reset error states before validation
+    setEmailError(false);
+    setPasswordError(false);
+    setEmailHelperText("");
+    setPasswordHelperText("");
+
+    // Validate both input fields
+    const isEmailValid = validateEmail(email);
+    const isPasswordValid = validatePassword(password);
+
+    // Stop if validation fails
+    if (!isEmailValid || !isPasswordValid) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      // Call authentication service to verify credentials
+      const response = await loginUser(email, password);
+
+      // Map API response to User type
+      const authenticatedUser: User = {
+        firstName: response.firstName,
+        lastName: response.lastName,
+        email: response.email,
+        medicalConditions: response.medicalConditions,
+        insurancePreferenceExplanation: response.insurancePreferenceExplanation,
+        incomeLevel: response.incomeLevel,
+        desiredBenefits: response.desiredBenefits,
+        token: response.token
+      };
+
+      // Update application state with authenticated user
+      setUser(authenticatedUser); // Update user state
+
+      // Store auth data in localStorage for persistent sessions
+      localStorage.setItem("user", JSON.stringify(authenticatedUser));
+      localStorage.setItem("token", authenticatedUser.token);
+      
+      // Store token in Chrome storage for extension background script access
+      await chrome.storage.local.set({ token: authenticatedUser.token });
+
+
+      // Navigate to home page on successful login
+      navigate("/");
+    } catch (error) {
+        
+        // Check specifically for "user not found" type errors
+        if (error instanceof Error && 
+          (error.message.toLowerCase().includes("user not found") || 
+          error.message.toLowerCase().includes("invalid credentials") ||
+          error.message.toLowerCase().includes("not found") ||
+          error.message.toLowerCase().includes("unauthorized"))) {
+          // Use custom message for authentication failures
+          setPasswordHelperText(AUTH_CONSTANTS.ERROR_MESSAGES.LOGIN_FAILED);
+        } else {
+          // For other errors, show the actual error message
+          const errorMessage = error instanceof Error 
+            ? error.message 
+            : "An error occurred during login";
+          setPasswordHelperText(errorMessage);
+        }
+      } finally {
+        // Reset loading state regardless of outcome
+        setIsLoading(false);
+      }
+    };
+
+  /**
+   * Redirects to the Register page
+   */
+  const handleRegister = () => {
+    navigate("/register");
+  };
+
+  return (
+    
+    <div className="login-container">
+        {/* Application logo */}
+        <Box className="logo"
+            component="img"
+            sx={{
+                width: "10em",
+                height: "auto",
+                display: "block",
+                marginLeft: "auto",
+                marginRight: "auto",
+                marginTop: "4rem",
+                userSelect: "none", /* Prevents text/image selection */
+                webkitUserDrag: "none", /* Prevents dragging in webkit browsers */
+                webkitUserSelect: "none", /* Safari specific */
+                mozUserSelect: "none", /* Firefox specific */
+                msUserSelect: "none", /* IE/Edge specific */
+                pointerEvents: "none" /* Prevents all click/drag events */
+            }}
+            alt="Cover Clever Logo" 
+            src={coverCleverLogo}
+        />
+      {/* Login form with submit handler */}
+      <form onSubmit={(e) => {
+        e.preventDefault();
+        handleLogin();
+      }}>
+        <Grid container spacing={3} className="login-content">
+          <Grid item xs={12}>
+            <Typography variant="h4" textAlign={"center"}>
+              Cover Clever
+            </Typography>
+          </Grid>
+
+          {/* Email input field */}
+          <Grid item xs={12}>
+            <TextField
+              InputProps={{
+                style: { color: "white" },
+                'aria-label': 'Email input field',
+              }}
+              InputLabelProps={{
+                style: { color: "white" },
+              }}
+              label="Email"
+              variant="outlined"
+              required
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input-field"
+              error={emailError}
+              helperText={emailHelperText}
+            />
+          </Grid>
+
+          {/* Password input field with visibility toggle */}
+          <Grid item xs={12}>
+            <TextField
+              InputProps={{
+                style: { color: "white" },
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      sx={{ color: "white" }}
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <Visibility /> : <VisibilityOff />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              InputLabelProps={{
+                style: { color: "white" },
+              }}
+              label="Password"
+              required
+              variant="outlined"
+              fullWidth
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input-field"
+              error={passwordError}
+              helperText={passwordHelperText}
+            />
+          </Grid>
+
+          {/* Action buttons container */}
+          <Grid item xs={12} className="login-actions">
+            {/* Login button with loading state */}
+            <Button
+              type="submit"
+              disabled={isLoading}
+              sx={{ width: "100%", marginBottom: "10px" }}
+              variant="contained"
+              color="primary"
+              aria-label="Login button"
+            >
+              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+            </Button>
+
+            {/* Register button for new users */}
+            <Button
+              sx={{ width: "100%", marginBottom: "10px" }}
+              variant="outlined"
+              color="secondary"
+              onClick={handleRegister}
+              className="register-button"
+            >
+              Register
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    </div>
+  );
+};
+
+export default Login;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export default function Login() {
+//   const navigate = useNavigate();
+//   const { fetchUser } = useContext(UserContext);
+//   const [data, setData] = useState({
+//     email: "",
+//     password: "",
+//   });
+
+//   const loginUser = async (e) => {
+//     e.preventDefault();
+//     const { email, password } = data;
+//     try {
+//       const response = await axios.post("/login", {
+//         email,
+//         password,
+//       });
+      
+//       setData({});
+//       await fetchUser();
+//       toast.success("Login success!");
+//       navigate("/questionnaire");
+      
+//       // Communicate with extension
+//       if (typeof chrome !== 'undefined' && chrome.runtime) {
+//         chrome.runtime.sendMessage(
+//           "obhfnegefpkpoicjhfafbibcocbakkoo",
+//           { 
+//             type: "LOGIN_SUCCESS",
+//             userData: response.data 
+//           },
+//           (response) => {
+//             if (response.status === "success") {
+//               navigate("/questionnaire");
+//             }
+//           }
+//         );
+//       }
+//     } catch (err) {
+//       const errorMessage = err.response?.data?.error || "Login failed";
+//       toast.error(errorMessage);
+//       console.log(err);
+//     }
+//   };
+
+//   return (
+//     <div>
+//       <form onSubmit={loginUser}>
+//         <label>Email</label>
+//         <input
+//           type="email"
+//           placeholder="Enter email..."
+//           value={data.email}
+//           onChange={(e) => setData({ ...data, email: e.target.value })}
+//         />
+//         <label>Password</label>
+//         <input
+//           type="password"
+//           placeholder="Enter password..."
+//           value={data.password}
+//           onChange={(e) => setData({ ...data, password: e.target.value })}
+//         />
+//         <button type="submit">Submit</button>
+//       </form>
+//     </div>
+//   );
+// }

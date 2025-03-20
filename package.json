@@ -1,0 +1,15 @@
+{
+  "private": true,
+  "name": "coverclever",
+  "version": "1.0.0",
+  "description": "CoverClever is a browser extension that: Scans users' insurance policies, summarizes them, provides a score based on user preferences obtained at profile setup, and includes a chatbot to answer questions about coverage details. Insurers its focuses on are: United Health Care, Blue Cross Blue Shield, and Ambetter.",
+  "author": "Dany Sigha",
+  "license": "ISC",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.8.2"
+  }
+}

@@ -1,0 +1,8 @@
+// packages/webpage/tsconfig.json
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist"
+  },
+  "include": ["src", "vite-env.d.ts"]
+}
