@@ -1,23 +1,23 @@
-import React, { useEffect, useState } from "react"
-import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate, Outlet } from "react-router-dom"
+import React, { useEffect, useState } from "react";
+import { HashRouter, Routes, Route, Navigate, useLocation, useNavigate, Outlet } from "react-router-dom";
 
-import { CssBaseline, GlobalStyles, ThemeProvider } from "@mui/material"
-import CircularProgress from "@mui/material/CircularProgress"
+import { CssBaseline, GlobalStyles, ThemeProvider } from "@mui/material";
+import CircularProgress from "@mui/material/CircularProgress";
 
-import theme from './theme'
-import { Navbar } from './components/Navbar'
+import theme from './theme';
+import { Navbar } from './components/Navbar';
 
-import { logoutUser } from "@coverclever/shared/"
+import { logoutUser } from "@coverclever/shared/";
 
-import Login from "./pages/Login"
-import Home from './pages/Home'
-import Score from './pages/Score'
-import Profile from './pages/Profile'
+import Login from "./pages/Login";
+import Home from './pages/Home';
+import Score from './pages/Score';
+import Profile from './pages/Profile';
 
-import { User } from "@coverclever/shared/"
+import { User } from "@coverclever/shared/";
 
 
-import './App.css'
+import './App.css';
 
 /**
  * Props interface for the NavBarLayout component
