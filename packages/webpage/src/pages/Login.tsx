@@ -1,12 +1,11 @@
 /* eslint-disable no-undef */
 // import axios from "axios"
-import { toast } from "react-hot-toast"
-import { useContext } from "react"
-import { UserContext } from "../../context/userContext"
-import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
+// import { toast } from "react-hot-toast"
+import { useContext } from "react";
+import { UserContext } from "../../context/userContext";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
-  Grid,
   Box,
   TextField,
   Button,
@@ -14,29 +13,21 @@ import {
   IconButton,
   InputAdornment,
   CircularProgress,
-} from "@mui/material"
-import { Visibility, VisibilityOff } from "@mui/icons-material"
-import "../styles/Login.css"
-import { loginUser } from "@coverclever/shared/"
-import { User } from "@coverclever/shared/"
-import { AUTH_CONSTANTS } from "@coverclever/shared/"
-import coverCleverLogo from "../assets/covercleverlogo.png"  // Add this import
+} from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+// import "../styles/Login.css"
+import { loginUser } from "@coverclever/shared/";
+import { User } from "@coverclever/shared/";
+import { AUTH_CONSTANTS } from "@coverclever/shared/";
+import coverCleverLogo from "../assets/covercleverlogo.png";  // Add this import
 
-/**
- * Props interface for the Login component
- * @property {Function} setUser - Function to update the user state in parent component
- */
-interface LoginProps {
-  setUser: (user: User) => void;
-}
 
 /**
  * Login component that handles user authentication
  * 
- * @param {LoginProps} props - Component props
  * @returns {JSX.Element} - Rendered component
  */
-const Login: React.FC<LoginProps> = ({ setUser }) => {
+const Login: React.FC = () => {
   // State variables for form inputs and error handling
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -155,14 +146,14 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
       };
 
       // Update application state with authenticated user
-      setUser(authenticatedUser); // Update user state
+      useContext(UserContext).setUser(authenticatedUser); // Update user state
 
       // Store auth data in localStorage for persistent sessions
       localStorage.setItem("user", JSON.stringify(authenticatedUser));
       localStorage.setItem("token", authenticatedUser.token);
       
       // Store token in Chrome storage for extension background script access
-      await chrome.storage.local.set({ token: authenticatedUser.token });
+      // await chrome.storage.local.set({ token: authenticatedUser.token });
 
 
       // Navigate to home page on successful login
@@ -225,44 +216,33 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
         e.preventDefault();
         handleLogin();
       }}>
-        <Grid container spacing={3} className="login-content">
-          <Grid item xs={12}>
-            <Typography variant="h4" textAlign={"center"}>
-              Cover Clever
-            </Typography>
-          </Grid>
+          <Typography variant="h4" textAlign={"center"}>
+            Cover Clever
+          </Typography>
 
           {/* Email input field */}
-          <Grid item xs={12}>
-            <TextField
-              InputProps={{
-                style: { color: "white" },
-                'aria-label': 'Email input field',
-              }}
-              InputLabelProps={{
-                style: { color: "white" },
-              }}
-              label="Email"
-              variant="outlined"
-              required
-              fullWidth
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
-              error={emailError}
-              helperText={emailHelperText}
-            />
-          </Grid>
+          <TextField
+            aria-label="Email"
+            label="Email"
+            variant="outlined"
+            required
+            fullWidth
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="input-field"
+            error={emailError}
+            helperText={emailHelperText}
+          />
+          
 
           {/* Password input field with visibility toggle */}
-          <Grid item xs={12}>
-            <TextField
-              InputProps={{
-                style: { color: "white" },
+          <TextField
+            slotProps={{
+              input: {
                 endAdornment: (
                   <InputAdornment position="end">
                     <IconButton
-                      sx={{ color: "white" }}
+                      sx={{ color: "black" }}
                       onClick={handleClickShowPassword}
                       onMouseDown={handleMouseDownPassword}
                       edge="end"
@@ -271,49 +251,44 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
                     </IconButton>
                   </InputAdornment>
                 ),
-              }}
-              InputLabelProps={{
-                style: { color: "white" },
-              }}
-              label="Password"
-              required
-              variant="outlined"
-              fullWidth
-              type={showPassword ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="input-field"
-              error={passwordError}
-              helperText={passwordHelperText}
-            />
-          </Grid>
+              }
+              
+            }}
+            label="Password"
+            required
+            variant="outlined"
+            fullWidth
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="input-field"
+            error={passwordError}
+            helperText={passwordHelperText}
+          />
 
-          {/* Action buttons container */}
-          <Grid item xs={12} className="login-actions">
-            {/* Login button with loading state */}
-            <Button
-              type="submit"
-              disabled={isLoading}
-              sx={{ width: "100%", marginBottom: "10px" }}
-              variant="contained"
-              color="primary"
-              aria-label="Login button"
-            >
-              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
-            </Button>
+        {/* Action buttons container */}
+          {/* Login button with loading state */}
+          <Button
+            type="submit"
+            disabled={isLoading}
+            sx={{ width: "100%", marginBottom: "10px" }}
+            variant="contained"
+            color="primary"
+            aria-label="Login button"
+          >
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+          </Button>
 
-            {/* Register button for new users */}
-            <Button
-              sx={{ width: "100%", marginBottom: "10px" }}
-              variant="outlined"
-              color="secondary"
-              onClick={handleRegister}
-              className="register-button"
-            >
-              Register
-            </Button>
-          </Grid>
-        </Grid>
+          {/* Register button for new users */}
+          <Button
+            sx={{ width: "100%", marginBottom: "10px" }}
+            variant="outlined"
+            color="secondary"
+            onClick={handleRegister}
+            className="register-button"
+          >
+            Register
+          </Button>
       </form>
     </div>
   );
