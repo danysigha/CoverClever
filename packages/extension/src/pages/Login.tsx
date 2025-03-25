@@ -17,8 +17,8 @@
  * - `loginUser` function from authService for backend authentication
  */
 
-import React, { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Grid,
   Box,
@@ -29,12 +29,12 @@ import {
   InputAdornment,
   CircularProgress,
 } from "@mui/material"
-import { Visibility, VisibilityOff } from "@mui/icons-material"
-import "../styles/Login.css"
-import { loginUser } from "@coverclever/shared/"
-import { User } from "@coverclever/shared/"
-import { AUTH_CONSTANTS } from "@coverclever/shared/"
-import coverCleverLogo from "../assets/covercleverlogo.png" // Add this import
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import "../styles/Login.css";
+import { loginUser } from "@coverclever/shared/";
+import { User } from "@coverclever/shared/";
+import { AUTH_CONSTANTS } from "@coverclever/shared/";
+import coverCleverLogo from "../assets/covercleverlogo.png"; // Add this import
 
 /**
  * Props interface for the Login component
