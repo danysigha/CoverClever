@@ -3,7 +3,7 @@
 // reset password 
 // all missing
 
-import { User } from '../types/User'
+import { User } from '../types/User';
 
 const API_URL = "http://localhost:8000"; // Backend API base URL
 
