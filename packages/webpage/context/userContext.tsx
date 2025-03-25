@@ -1,8 +1,8 @@
-import React from "react"
-import axios from "axios"
-import { createContext, useState, useEffect } from "react"
-import PropTypes from 'prop-types'
-import { User } from "@coverclever/shared/"
+import React from "react";
+import axios from "axios";
+import { createContext, useState, useEffect } from "react";
+import PropTypes from 'prop-types';
+import { User } from "@coverclever/shared/";
 
 interface UserContextType {
     user: User | null;
